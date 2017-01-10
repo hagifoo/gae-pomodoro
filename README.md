@@ -1,12 +1,11 @@
-gae-pomodoro
-========
+# gae-pomodoro
 
 Sample GAE application to learn Firebase and webpack.
 
-# Overview
+## Overview
 Team pomodoro timer.
 
-# Setup and development
+## Setup and development
 
 You shuold install node, npm, gae sdk for python beforehand.
 
@@ -25,7 +24,7 @@ $ npm run start
 ```
 
 
-# Directory Structure
+## Directory Structure
 ```
 app/  # gae application
   app.yaml
@@ -34,3 +33,6 @@ app/  # gae application
 webapp/  # web browser application
   src/
 ```
+
+## License
+MIT
