@@ -1,0 +1,8 @@
+# build artifacts
+app/assets/
+
+# packages
+node_modules/
+
+# python
+*.pyc
