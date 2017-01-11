@@ -15,5 +15,5 @@ handlers = []
 
 ### Main
 app = webapp2.WSGIApplication([
-    webapp2.Route(r'/api/', 'api.Handler'),
+    webapp2.Route(r'/api/token/firebase', 'application.handler.token.FirebaseHandler'),
 ], debug=True)
