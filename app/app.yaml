@@ -8,11 +8,9 @@ handlers:
 - url: /assets
   static_dir: assets
 
-- url: /js
-  static_dir: js
-
-- url: /image
-  static_dir: image
-
 - url: .*
   script: src.main.app
+
+libraries:
+- name: pycrypto
+  version: latest
