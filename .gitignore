@@ -6,6 +6,12 @@ node_modules/
 
 # python
 *.pyc
+*.egg-info
+*.dist-info
 
 # IDE
 .idea/
+
+# Secret Keys
+*.p12
+*.pem
