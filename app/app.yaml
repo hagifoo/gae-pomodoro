@@ -5,11 +5,15 @@ api_version: 1
 threadsafe: true
 
 handlers:
-- url: /assets
-  static_dir: assets
+- url: /api/.*
+  script: src.main.app
+
+- url: /
+  static_files: assets/index.html
+  upload: assets/index.html
 
 - url: .*
-  script: src.main.app
+  static_dir: assets
 
 libraries:
 - name: pycrypto
