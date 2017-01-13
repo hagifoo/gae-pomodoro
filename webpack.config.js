@@ -9,7 +9,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, 'app', 'assets'),
         filename: '[name].js',
-        publicPath: '.'
+        publicPath: ''
     },
     devtool: "#source-map",
     devServer: {
@@ -43,6 +43,7 @@ module.exports = {
         ]
     },
     externals: {
-        firebase: 'firebase'
+        firebase: 'firebase',
+        jquery: 'jQuery'
     }
 }

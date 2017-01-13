@@ -1,5 +1,6 @@
 var d3 = require('d3');
 var moment = require('moment');
+var _ = require('underscore');
 
 class TimerView {
     constructor(timer, width, height, selector) {
@@ -7,28 +8,51 @@ class TimerView {
         this._width = width;
         this._height = height;
         this._selector = selector;
+
+        this._timer.on('change', _.bind(this.render, this));
     }
 
     render() {
+        d3.select(this._selector).select('svg').remove();
+        if(this._intervalId) {
+            clearInterval(this._intervalId);
+            this._intervalId = null;
+        }
         var svg = d3.select(this._selector).append('svg')
             .attr('width', this._width)
             .attr('height', this._height);
 
         var center = svg.append('g')
+            .classed('user-timer', true)
             .attr('transform',
             `translate(${this._width/2}, ${this._height/2})`);
 
-        setInterval(() => {
-            var now = moment();
-            if(!this._timer.startAt) {
-                this._timer.startAt = now.unix();
-            }
-            let dt = now.unix() - this._timer.startAt;
-            var fromRad = dt / this._timer.pomodoroPeriod * Math.PI * 2;
-            let r = this._timer.pomodoroPeriod - dt;
-            this.renderArc(center, fromRad);
-            this.renderText(center, `${Math.floor(r/60)}:${r%60}`);
+        this._render(center);
+        this._intervalId = setInterval(() => {
+            this._render(center);
         }, 1000);
+    }
+    _render(parent) {
+        var now = moment();
+        if(this._timer.onPomodoro(now)) {
+            parent.classed('on-pomodoro', true);
+            let remaining = this._timer.remainingPomodoroTime();
+            let pomodoroTime = this._timer.get('pomodoroTime');
+            let fromRad = (pomodoroTime - remaining) / pomodoroTime * Math.PI * 2;
+            let r = remaining;
+            this.renderArc(parent, fromRad);
+            this.renderText(parent, this.timeToString(r));
+        } else {
+            parent.classed('on-pomodoro', false);
+            this.renderArc(parent, 0);
+            let r = this._timer.get('pomodoroTime');
+            this.renderText(parent, this.timeToString(r));
+        }
+    }
+    timeToString(time) {
+        let min = ('00' + Math.floor(time / 60)).slice(-2);
+        let sec = ('00' + time % 60).slice(-2);
+        return `${min}:${sec}`;
     }
     renderText(parent, text) {
     d3.select('.user-timer-text').remove();

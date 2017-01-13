@@ -1,13 +1,10 @@
 var API = require('./api');
 var firebase = require('firebase');
+var _ = require('underscore');
 
 class Firebase {
-    constructor(config) {
-        this._config = config;
-    }
-
-    initialize() {
-        firebase.initializeApp(this._config);
+    initialize(config) {
+        firebase.initializeApp(config);
 
         var promise = new Promise((resolve, reject) => {
             firebase.auth().onAuthStateChanged(user => {
@@ -38,16 +35,19 @@ class Firebase {
             name: user.name
         });
     }
-    fetchTimer(user) {
+    listenTimer(user, callback) {
         var ref = firebase.database().ref(`users/${user.id}/timer`);
-        var promise = new Promise((resolve, reject) => {
-            ref.on('value', function (snapshot) {
-                resolve(snapshot.val());
-            });
+        ref.on('value', function (snapshot) {
+            callback(snapshot.val());
         });
-
-        return promise;
+    }
+    updateTimer(target, user = {id: 111}) {
+        var updates = {};
+        _.each(target, (v, k)=> {
+            updates[`users/${user.id}/timer/${k}`] = v;
+        });
+        firebase.database().ref().update(updates);
     }
 };
 
-module.exports = Firebase;
+module.exports = new Firebase();
