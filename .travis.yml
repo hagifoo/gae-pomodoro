@@ -1,0 +1,18 @@
+sudo: false
+language: node_js
+before_install:
+- openssl aes-256-cbc -K $encrypted_c17185efc1d3_key -iv $encrypted_c17185efc1d3_iv -in app/client-secret.json.enc -out app/client-secret.json -d
+install:
+- npm install
+
+script:
+- npm run build
+- cd app/
+
+deploy:
+    provider: gae
+    keyfile: client-secret.json
+    project: hagifoo-firebase-todo
+    default: true
+    skip_cleanup: true
+    on: master

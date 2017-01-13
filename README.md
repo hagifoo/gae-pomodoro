@@ -1,3 +1,5 @@
+![Build Status](https://travis-ci.org/hagifoo/gae-pomodoro.svg?branch=master)
+
 # gae-pomodoro
 
 Sample GAE application to learn Firebase and webpack.
