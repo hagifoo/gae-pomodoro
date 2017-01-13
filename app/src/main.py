@@ -9,11 +9,21 @@ import webapp2
 sys.path.insert(0, join(dirname(__file__)))
 
 logging.getLogger().setLevel(logging.DEBUG)
-
-### Variables
-handlers = []
+config = {
+    'webapp2_extras.sessions': {
+        'secret_key': 'abcdefg',
+        'session_max_age': 3600
+    }
+}
 
 ### Main
 app = webapp2.WSGIApplication([
-    webapp2.Route(r'/api/token/firebase', 'application.handler.token.FirebaseHandler'),
-], debug=True)
+    webapp2.Route(r'/api/user',
+                  'application.handler.UserHandler'),
+    webapp2.Route(r'/api/token/firebase',
+                  'application.handler.token.FirebaseHandler'),
+    webapp2.Route(r'/signin/google',
+                  'application.handler.auth.SignInHandler'),
+    webapp2.Route(r'/auth/google',
+                  'application.handler.auth.CallbackHandler'),
+], debug=True, config=config)

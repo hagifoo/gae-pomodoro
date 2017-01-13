@@ -4,12 +4,11 @@ This module provides token handling
 
 import json
 
-from google.appengine.ext import webapp
-
+from application.handler import BaseHandler, signin_user_only
 import infra.firebase as firebase
 
 
-class FirebaseHandler(webapp.RequestHandler):
+class FirebaseHandler(BaseHandler):
     def get(self):
         token = {
             'token': firebase.create_custom_token(111, False)
