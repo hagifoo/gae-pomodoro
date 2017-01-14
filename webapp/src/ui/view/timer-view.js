@@ -36,14 +36,25 @@ class TimerView {
         var now = moment();
         if(this._timer.onPomodoro(now)) {
             parent.classed('on-pomodoro', true);
+            parent.classed('on-break', false);
             let remaining = this._timer.remainingPomodoroTime();
             let pomodoroTime = this._timer.get('pomodoroTime');
             let fromRad = (pomodoroTime - remaining) / pomodoroTime * Math.PI * 2;
             let r = remaining;
             this.renderArc(parent, fromRad);
             this.renderText(parent, this.timeToString(r));
+        } else if(this._timer.onBreak(now)) {
+            parent.classed('on-pomodoro', false);
+            parent.classed('on-break', true);
+            let remaining = this._timer.remainingBreakTime();
+            let breakTime = this._timer.get('breakTime');
+            let fromRad = (breakTime - remaining) / breakTime * Math.PI * 2;
+            let r = remaining;
+            this.renderArc(parent, fromRad);
+            this.renderText(parent, this.timeToString(r));
         } else {
             parent.classed('on-pomodoro', false);
+            parent.classed('on-break', false);
             this.renderArc(parent, 0);
             let r = this._timer.get('pomodoroTime');
             this.renderText(parent, this.timeToString(r));
