@@ -19,6 +19,18 @@ module.exports = Backbone.Model.extend({
         Firebase.updateTimer({startAt: 0});
     },
 
+    setPomodoroTime: function (time) {
+        Firebase.updateTimer({pomodoroTime: time});
+    },
+
+    setBreakTime: function (time) {
+        Firebase.updateTimer({breakTime: time});
+    },
+
+    setContinuous: function (isContinuous) {
+        Firebase.updateTimer({isContinuous: isContinuous});
+    },
+
     onPomodoro: function(now = Moment()) {
         let startAt = this.get('startAt');
 

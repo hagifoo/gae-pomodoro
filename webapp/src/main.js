@@ -7,6 +7,7 @@ var Pomodoro = require('./domain/pomodoro');
 var PomodoroListView = require('./ui/view/pomodoro-list-view');
 var TimerView = require('./ui/view/timer-view');
 var TimerControlView = require('./ui/view/timer-control-view');
+var TimerSettingView = require('./ui/view/timer-setting-view');
 
 
 var app = new Backbone.Marionette.Application({
@@ -16,7 +17,8 @@ var app = new Backbone.Marionette.Application({
             el: '#root',
             regions: {
                 pomodoro: '#pomodoros',
-                timerControl: '#timer .control'
+                timerControl: '#timer .control',
+                timerSetting: '#timer-setting'
             }
         });
         var rootView = new RootView();
@@ -34,6 +36,7 @@ var app = new Backbone.Marionette.Application({
                 timerView.render();
 
                 rootView.showChildView('timerControl', new TimerControlView({model: timer}));
+                rootView.showChildView('timerSetting', new TimerSettingView({model: timer}));
             });
     }
 });

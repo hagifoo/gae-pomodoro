@@ -18,7 +18,21 @@
             font-size: 64px;
         }
         .on-pomodoro.user-timer {
-            fill: #ffc107;
+            fill: #1565c0;
+        }
+        /* label focus color */
+        .input-field input[type=text]:focus + label {
+            color: #1565c0;
+        }
+        /* label underline focus color */
+        .input-field input[type=text]:focus,
+        .input-field input[type=text].valid {
+            border-bottom: 1px solid #1565c0;
+            box-shadow: 0 1px 0 0 #1565c0;
+        }
+        [type="checkbox"]:checked+label:before {
+            border-right: 2px solid #1565c0;
+            border-bottom: 2px solid #1565c0;
         }
     </style>
 </head>
@@ -30,6 +44,8 @@
                 <div class="circle"></div>
                 <div class="control"></div>
             </div>
+            <div class="col s1"></div>
+            <div id="timer-setting" class="col s2"></div>
         </div>
     </div>
     <script type="text/javascript" src="/main.js" charset="utf-8"></script>
