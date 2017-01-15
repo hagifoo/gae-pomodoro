@@ -1,11 +1,22 @@
 # encoding: utf-8
 import base64
+import datetime
+import json
 import jws
 import python_jwt as jwt
+import requests
+import time
 
 from google.appengine.api import app_identity
-import datetime
+from google.appengine.api import urlfetch
 
+from oauth2client.client import GoogleCredentials
+
+FIREBASE_SCOPES = [
+    'https://www.googleapis.com/auth/firebase.database',
+    'https://www.googleapis.com/auth/userinfo.email']
+
+FIREBASE_URL = 'https://{}.firebaseio.com'.format(app_identity.get_application_id())
 
 def create_custom_token(uid, is_premium_account):
     service_account_email = app_identity.get_service_account_name()
@@ -33,3 +44,58 @@ def create_custom_token(uid, is_premium_account):
     sign = base64.urlsafe_b64encode(app_identity.sign_blob(str(header + '.' + body))[1]).strip('=')
 
     return header + '.' + body + '.' + sign
+
+
+def get_access_token():
+    return GoogleCredentials\
+        .get_application_default()\
+        .create_scoped(FIREBASE_SCOPES)\
+        .get_access_token()
+
+
+def get_timer(user_id):
+    path = '/users/{}/timer.json'.format(user_id)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+    return json.loads(urlfetch.fetch(url).content)
+    return requests.get('{}{}?access_token={}'.format(FIREBASE_URL, path, token)).json()
+
+
+def start_timer(user_id, start_at):
+    path = '/users/{}/timer.json'.format(user_id)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+    data = {
+        'startAt': start_at
+    }
+
+    return json.loads(
+        urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
+    .content)
+
+
+def stop_timer(user_id):
+    path = '/users/{}/timer.json'.format(user_id)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+    data = {
+        'startAt': 0
+    }
+
+    return json.loads(
+        urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
+            .content)
+
+
+def add_pomodoro(user_id, start_at, time):
+    path = '/users/{}/pomodoros/{}.json'.format(user_id, start_at)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+    data = {
+        'time': time
+    }
+
+    return json.loads(
+        urlfetch.fetch(
+            url, payload=json.dumps(data), method='PUT'
+        ).content)

@@ -1,5 +1,6 @@
 var Backbone = require('backbone');
 var Moment = require('moment');
+var API = require('../infra/api');
 var Firebase = require('../infra/firebase');
 
 module.exports = Backbone.Model.extend({
@@ -12,11 +13,11 @@ module.exports = Backbone.Model.extend({
     },
 
     start: function () {
-        Firebase.updateTimer({startAt: Moment().unix()});
+        API.startTimer();
     },
 
     stop: function () {
-        Firebase.updateTimer({startAt: 0});
+        API.stopTimer();
     },
 
     setPomodoroTime: function (time) {
