@@ -48,6 +48,22 @@ class Firebase {
         });
         firebase.database().ref().update(updates);
     }
+    listenPomodoros(user, callback, fromStartAt) {
+        var ref = firebase.database().ref(`users/${user.id}/pomodoros`);
+        if(fromStartAt) {
+            ref = ref.orderByKey().startAt('' + fromStartAt);
+        }
+        ref.on('value', function (snapshot) {
+            callback(snapshot.val());
+        });
+    }
+    updatePomodoros(target, user = {id: 111}) {
+        var updates = {};
+        _.each(target, (v, k)=> {
+            updates[`users/${user.id}/pomodoros/${k}`] = v;
+        });
+        firebase.database().ref().update(updates);
+    }
 };
 
 module.exports = new Firebase();

@@ -23,12 +23,12 @@ var app = new Backbone.Marionette.Application({
         });
         var rootView = new RootView();
         this.showView(rootView);
-        rootView.showChildView('pomodoro', new PomodoroListView({
-            collection: new Backbone.Collection([
-                new Pomodoro(),
-                new Pomodoro()
-            ])
-        }));
+        Repository.getPomodoros()
+            .then(pomodoros => {
+                rootView.showChildView('pomodoro', new PomodoroListView({
+                    collection: pomodoros
+                }));
+            });
 
         Repository.getTimer()
             .then(timer => {
