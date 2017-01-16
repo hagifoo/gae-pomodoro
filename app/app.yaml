@@ -6,6 +6,12 @@ handlers:
 - url: /api/.*
   script: src.main.app
 
+- url: /signin/.*
+  script: src.main.app
+
+- url: /auth/.*
+  script: src.main.app
+
 - url: /
   static_files: assets/index.html
   upload: assets/index.html
@@ -16,3 +22,9 @@ handlers:
 libraries:
 - name: pycrypto
   version: latest
+
+- name: ssl
+  version: latest
+
+env_variables:
+  OAUTHLIB_INSECURE_TRANSPORT: True

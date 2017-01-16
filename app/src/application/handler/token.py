@@ -9,6 +9,7 @@ import infra.firebase as firebase
 
 
 class FirebaseHandler(BaseHandler):
+    @signin_user_only
     def get(self):
         token = {
             'token': firebase.create_custom_token(111, False)

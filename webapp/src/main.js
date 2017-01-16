@@ -44,10 +44,10 @@ var app = new Backbone.Marionette.Application({
 Repository.getUser()
     .then(user => {
         // signin
-        if(user) {
+        if(user.id) {
             return Firebase.initialize(FirebaseConfig);
         } else {
-
+            location.href = '/signin/google';
         }
     })
     .then(() => {

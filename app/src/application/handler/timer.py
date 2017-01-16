@@ -9,6 +9,7 @@ from domain import Timer
 
 
 class TimerStartHandler(BaseHandler):
+    @signin_user_only
     def get(self):
         timer = Timer.fetch(111)
         r = timer.start()
@@ -17,6 +18,7 @@ class TimerStartHandler(BaseHandler):
 
 
 class TimerStopHandler(BaseHandler):
+    @signin_user_only
     def get(self):
         timer = Timer.fetch(111)
         r = timer.stop()
@@ -25,6 +27,7 @@ class TimerStopHandler(BaseHandler):
 
 
 class TimerEndHandler(BaseHandler):
+    @signin_user_only
     def post(self, user_id):
         timer = Timer.fetch(user_id)
         r = timer.add_pomodoro()

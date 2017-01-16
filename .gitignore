@@ -17,3 +17,4 @@ node_modules/
 *.p12
 *.pem
 client-secret.json
+app/*/secret.py

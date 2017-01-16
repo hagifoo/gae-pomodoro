@@ -53,6 +53,25 @@ def get_access_token():
         .get_access_token()
 
 
+def add_user(data):
+    path = '/users.json'
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(
+        FIREBASE_URL, path, token)
+    return json.loads(
+        urlfetch.fetch(
+            url, method='POST', payload=json.dumps(data)
+        ).content)
+
+
+def get_user_by_google_id(google_id):
+    path = '/users.json'
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}&orderBy="googleId"&equalTo="{}"'.format(
+        FIREBASE_URL, path, token, google_id)
+    return json.loads(urlfetch.fetch(url).content)
+
+
 def get_timer(user_id):
     path = '/users/{}/timer.json'.format(user_id)
     token = get_access_token()[0]

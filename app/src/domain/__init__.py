@@ -53,3 +53,67 @@ class Timer(object):
             break_time=timer_json.get('breakTime'),
             is_continuous=timer_json.get('isContinuous'),
         )
+
+
+class User(object):
+    def __init__(self, id, name, image, google_id):
+        self._id = id
+        self._name = name
+        self._image = image
+        self._google_id = google_id
+
+    @property
+    def id(self):
+        return self._id
+
+    def add(self):
+        if self.id is not None:
+            raise RuntimeError('id is not None')
+
+        r = firebase.add_user({
+            'name': self._name,
+            'image': self._image,
+            'googleId': self._google_id,
+            'timer': {
+                'startAt': 0,
+                'pomodoroTime': 1500,
+                'breakTime': 300,
+                'isContinuous': False
+            }
+        })
+
+        self._id = r['name']
+
+    @classmethod
+    def fetch(cls, google_id):
+        user_json = firebase.get_user_by_google_id(google_id)
+        if not user_json:
+            return None
+        else:
+            id_ = user_json.keys()[0]
+            j = user_json[id_]
+            return User(
+                id=id_,
+                name=j.get('name'),
+                image=j.get('image'),
+                google_id=j['googleId']
+            )
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self._name,
+            'image': self._image,
+            'googleId': self._google_id
+        }
+
+
+    @classmethod
+    def from_json(cls, j):
+        return cls(
+            id=j.get('id'),
+            name=j.get('name'),
+            image=j.get('image'),
+            google_id=j['googleId']
+        )
+
