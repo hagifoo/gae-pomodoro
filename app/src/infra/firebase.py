@@ -107,7 +107,7 @@ def stop_timer(user_id):
 
 
 def add_pomodoro(user_id, start_at, time):
-    path = '/users/{}/pomodoros/{}.json'.format(user_id, start_at)
+    path = '/pomodoros/{}/{}.json'.format(user_id, start_at)
     token = get_access_token()[0]
     url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
     data = {

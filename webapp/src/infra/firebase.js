@@ -50,7 +50,7 @@ class Firebase {
         firebase.database().ref().update(updates);
     }
     listenPomodoros(user, callback, fromStartAt) {
-        var ref = firebase.database().ref(`users/${user.id}/pomodoros`);
+        var ref = firebase.database().ref(`/pomodoros/${user.id}`);
         if(fromStartAt) {
             ref = ref.orderByKey().startAt('' + fromStartAt);
         }
@@ -61,7 +61,7 @@ class Firebase {
     updatePomodoros(target, user) {
         var updates = {};
         _.each(target, (v, k)=> {
-            updates[`users/${user.id}/pomodoros/${k}`] = v;
+            updates[`/pomodoros/${user.id}/${k}`] = v;
         });
         firebase.database().ref().update(updates);
     }
