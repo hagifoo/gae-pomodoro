@@ -74,6 +74,7 @@ class User(object):
         r = firebase.add_user({
             'name': self._name,
             'image': self._image,
+            'email': self._email,
             'googleId': self._google_id,
             'timer': {
                 'startAt': 0,
