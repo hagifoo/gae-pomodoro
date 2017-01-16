@@ -14,7 +14,7 @@ def add_timer_end_task(user_id, start_at, eta):
     )
 
 def delete_timer_end_task(user_id, start_at):
-    q = taskqueue.Queue('default')
+    q = taskqueue.Queue()
     q.delete_tasks(taskqueue.Task(
         name=get_timer_end_task_name(user_id, start_at),
     ))
