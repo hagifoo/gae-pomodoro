@@ -8,7 +8,7 @@ install:
 script:
 - npm run build
 - cd app/
-- sed -i -e '/OAUTHLIB_INSECURE_TRANSPORT: True/d' app.yaml
+- sed -i -e "/OAUTHLIB_INSECURE_TRANSPORT/d" app.yaml
 deploy:
   provider: gae
   keyfile: client-secret.json
