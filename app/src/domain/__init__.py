@@ -24,6 +24,9 @@ class Timer(object):
         taskqueue.delete_timer_end_task(self._user_id, self.start_at)
         return firebase.stop_timer(self._user_id)
 
+    def set_next(self):
+        taskqueue.add_timer_start_task(self._user_id, self.start_at, self.next_pomodoro_start_dt)
+
     def add_pomodoro(self):
         return firebase.add_pomodoro(
             self._user_id,
@@ -40,8 +43,16 @@ class Timer(object):
         return datetime.fromtimestamp(self._start_at + self._pomodoro_time)
 
     @property
+    def next_pomodoro_start_dt(self):
+        return datetime.fromtimestamp(self._start_at + self._pomodoro_time + self._break_time)
+
+    @property
     def pomodoro_time(self):
         return self._pomodoro_time
+
+    @property
+    def is_continuous(self):
+        return self._is_continuous
 
     @classmethod
     def fetch(cls, user_id):

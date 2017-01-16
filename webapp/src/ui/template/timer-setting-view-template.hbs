@@ -12,6 +12,7 @@
     <label for="breakTime">Break Time [min]</label>
 </div>
 <div class="col s12">
-    <input id="isContinuous" type="checkbox">
+    <input id="isContinuous" type="checkbox"
+        {{#if running}}disabled{{/if}}>
     <label for="isContinuous">Continuous Mode</label>
 </div>
