@@ -5,6 +5,7 @@ var Firebase = require('../infra/firebase');
 
 module.exports = Backbone.Model.extend({
     defaults: {
+        user: null,
         startAt: null,  // unix time without msec
         pomodoroTime: 1500, // sec
         breakTime: 300,  // sec
@@ -21,15 +22,15 @@ module.exports = Backbone.Model.extend({
     },
 
     setPomodoroTime: function (time) {
-        Firebase.updateTimer({pomodoroTime: time});
+        Firebase.updateTimer({pomodoroTime: time}, this.get('user'));
     },
 
     setBreakTime: function (time) {
-        Firebase.updateTimer({breakTime: time});
+        Firebase.updateTimer({breakTime: time}, this.get('user'));
     },
 
     setContinuous: function (isContinuous) {
-        Firebase.updateTimer({isContinuous: isContinuous});
+        Firebase.updateTimer({isContinuous: isContinuous}, this.get('user'));
     },
 
     getTotalTime: function() {

@@ -23,7 +23,8 @@ class Firebase {
         return promise;
     }
 
-    singOut() {
+    signOut(config) {
+        firebase.initializeApp(config);
         return firebase.auth().signOut();
     }
     signInWithCustomToken(token) {
@@ -41,7 +42,7 @@ class Firebase {
             callback(snapshot.val());
         });
     }
-    updateTimer(target, user = {id: 111}) {
+    updateTimer(target, user) {
         var updates = {};
         _.each(target, (v, k)=> {
             updates[`users/${user.id}/timer/${k}`] = v;
@@ -57,7 +58,7 @@ class Firebase {
             callback(snapshot.val());
         });
     }
-    updatePomodoros(target, user = {id: 111}) {
+    updatePomodoros(target, user) {
         var updates = {};
         _.each(target, (v, k)=> {
             updates[`users/${user.id}/pomodoros/${k}`] = v;

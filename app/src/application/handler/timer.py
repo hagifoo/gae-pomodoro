@@ -11,7 +11,7 @@ from domain import Timer
 class TimerStartHandler(BaseHandler):
     @signin_user_only
     def get(self):
-        timer = Timer.fetch(111)
+        timer = Timer.fetch(self.user.id)
         r = timer.start()
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json.dumps(r))
@@ -20,16 +20,22 @@ class TimerStartHandler(BaseHandler):
 class TimerStopHandler(BaseHandler):
     @signin_user_only
     def get(self):
-        timer = Timer.fetch(111)
+        timer = Timer.fetch(self.user.id)
         r = timer.stop()
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json.dumps(r))
 
 
 class TimerEndHandler(BaseHandler):
-    @signin_user_only
-    def post(self, user_id):
+    def post(self):
+        user_id = self.request.get('user_id')
+        if not user_id:
+            return
+
         timer = Timer.fetch(user_id)
+        if not timer:
+            return
+
         r = timer.add_pomodoro()
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json.dumps(r))

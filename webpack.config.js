@@ -19,6 +19,14 @@ module.exports = {
             '/api': {
                 target: 'http://localhost:8080/',
                 secure: false
+            },
+            '/signin': {
+                target: 'http://localhost:8080/',
+                secure: false
+            },
+            '/auth': {
+                target: 'http://localhost:8080/',
+                secure: false
             }
         }
     },

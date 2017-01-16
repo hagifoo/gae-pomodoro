@@ -45,6 +45,7 @@ class Repository {
     updateTimer(timer) {
         if(!this._timer) {
             this._timer = new Timer(timer);
+            this._timer.set({user: this._user});
         } else {
             this._timer.set(timer);
         }

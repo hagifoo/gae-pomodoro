@@ -12,7 +12,7 @@ class FirebaseHandler(BaseHandler):
     @signin_user_only
     def get(self):
         token = {
-            'token': firebase.create_custom_token(111, False)
+            'token': firebase.create_custom_token(self.user.id, False)
         }
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json.dumps(token))

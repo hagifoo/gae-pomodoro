@@ -26,7 +26,7 @@ app = webapp2.WSGIApplication([
                   'application.handler.timer.TimerStartHandler'),
     webapp2.Route(r'/api/user/timer/stop',
                   'application.handler.timer.TimerStopHandler'),
-    webapp2.Route(r'/api/users/<user_id>/timer/end',
+    webapp2.Route(r'/api/user/timer/end',
                   'application.handler.timer.TimerEndHandler'),
     webapp2.Route(r'/signin/google',
                   'application.handler.auth.SignInHandler'),

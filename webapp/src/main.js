@@ -47,7 +47,10 @@ Repository.getUser()
         if(user.id) {
             return Firebase.initialize(FirebaseConfig);
         } else {
-            location.href = '/signin/google';
+            Firebase.signOut(FirebaseConfig)
+                .then(() => {
+                    location.href = '/signin/google';
+                });
         }
     })
     .then(() => {
