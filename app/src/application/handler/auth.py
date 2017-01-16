@@ -58,6 +58,7 @@ class CallbackHandler(BaseHandler):
             user = User(
                 None,
                 name=j.get('name'),
+                email=j.get('email'),
                 image=j.get('picture'),
                 google_id=j['id']
             )

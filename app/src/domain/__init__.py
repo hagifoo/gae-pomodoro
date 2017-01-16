@@ -56,9 +56,10 @@ class Timer(object):
 
 
 class User(object):
-    def __init__(self, id, name, image, google_id):
+    def __init__(self, id, name, email, image, google_id):
         self._id = id
         self._name = name
+        self._email = email
         self._image = image
         self._google_id = google_id
 
@@ -95,6 +96,7 @@ class User(object):
             return User(
                 id=id_,
                 name=j.get('name'),
+                email=j.get('email'),
                 image=j.get('image'),
                 google_id=j['googleId']
             )
@@ -103,6 +105,7 @@ class User(object):
         return {
             'id': self.id,
             'name': self._name,
+            'email': self._email,
             'image': self._image,
             'googleId': self._google_id
         }
@@ -113,6 +116,7 @@ class User(object):
         return cls(
             id=j.get('id'),
             name=j.get('name'),
+            email=j.get('email'),
             image=j.get('image'),
             google_id=j['googleId']
         )

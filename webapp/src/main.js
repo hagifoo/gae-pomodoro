@@ -3,11 +3,11 @@ var Firebase = require('./infra/firebase');
 var Backbone = require('backbone');
 require('backbone.marionette');
 var Repository = require('./domain/repository');
-var Pomodoro = require('./domain/pomodoro');
 var PomodoroListView = require('./ui/view/pomodoro-list-view');
 var TimerView = require('./ui/view/timer-view');
 var TimerControlView = require('./ui/view/timer-control-view');
 var TimerSettingView = require('./ui/view/timer-setting-view');
+var SidenavView = require('./ui/view/sidenav-view');
 
 
 var app = new Backbone.Marionette.Application({
@@ -18,11 +18,20 @@ var app = new Backbone.Marionette.Application({
             regions: {
                 pomodoro: '#pomodoros',
                 timerControl: '#timer .control',
-                timerSetting: '#timer-setting'
+                timerSetting: '#timer-setting',
+                sidenav: '#nav',
             }
         });
         var rootView = new RootView();
         this.showView(rootView);
+
+        Repository.getUser()
+            .then(user => {
+                rootView.showChildView('sidenav', new SidenavView({
+                    model: user
+                }))
+            });
+
         Repository.getPomodoros()
             .then(pomodoros => {
                 rootView.showChildView('pomodoro', new PomodoroListView({
@@ -54,6 +63,6 @@ Repository.getUser()
         }
     })
     .then(() => {
-        app.start();
+        app.start()
     });
 
