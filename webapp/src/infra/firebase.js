@@ -1,9 +1,11 @@
-var API = require('./api');
-var firebase = require('firebase');
-var _ = require('underscore');
+const API = require('./api');
+const firebase = require('firebase');
+const _ = require('underscore');
+const Loader = require('./loader');
 
 class Firebase {
     initialize(config) {
+        Loader.start();
         firebase.initializeApp(config);
 
         var promise = new Promise((resolve, reject) => {
@@ -12,9 +14,13 @@ class Firebase {
                     API.getFirebaseToken()
                         .then(data => {
                             this.signInWithCustomToken(data.token)
-                                .then(() => resolve());
+                                .then(() => {
+                                    Loader.end();
+                                    resolve();
+                                });
                         });
                 } else {
+                    Loader.end();
                     resolve();
                 }
             });
@@ -30,15 +36,11 @@ class Firebase {
     signInWithCustomToken(token) {
         return firebase.auth().signInWithCustomToken(token);
     }
-    addUser(user) {
-        firebase.database().ref(`users/${user.id}`).
-        set({
-            name: user.name
-        });
-    }
     listenTimer(user, callback) {
+        Loader.start();
         var ref = firebase.database().ref(`users/${user.id}/timer`);
         ref.on('value', function (snapshot) {
+            Loader.end();
             callback(snapshot.val());
         });
     }
@@ -50,11 +52,13 @@ class Firebase {
         firebase.database().ref().update(updates);
     }
     listenPomodoros(user, callback, fromStartAt) {
+        Loader.start();
         var ref = firebase.database().ref(`/pomodoros/${user.id}`);
         if(fromStartAt) {
             ref = ref.orderByKey().startAt('' + fromStartAt);
         }
         ref.on('value', function (snapshot) {
+            Loader.end();
             callback(snapshot.val());
         });
     }

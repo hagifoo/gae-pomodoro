@@ -1,58 +1,36 @@
-var $ = require('jquery');
+const $ = require('jquery');
+const Loader = require('./loader');
 
 class API {
-    getUser() {
-        var promise = new Promise(function(resolve, reject) {
+    ajax(url, method) {
+        Loader.start();
+        const promise = new Promise(function(resolve, reject) {
             $.ajax({
-                method: 'GET',
-                url: '/api/user',
+                method: method,
+                url: url,
                 dataType: 'json'
             }).done(function(data) {
                 resolve(data);
             });
         });
+        promise.then(() => {
+            Loader.end();
+        });
 
         return promise;
+    }
+    getUser() {
+        return this.ajax('/api/user', 'GET');
     }
     startTimer() {
-        var promise = new Promise(function(resolve, reject) {
-            $.ajax({
-                method: 'GET',
-                url: '/api/user/timer/start',
-                dataType: 'json'
-            }).done(function(data) {
-                resolve(data);
-            });
-        });
-
-        return promise;
+        return this.ajax('/api/user/timer/start', 'GET');
     }
     stopTimer() {
-        var promise = new Promise(function(resolve, reject) {
-            $.ajax({
-                method: 'GET',
-                url: '/api/user/timer/stop',
-                dataType: 'json'
-            }).done(function(data) {
-                resolve(data);
-            });
-        });
-
-        return promise;
+        return this.ajax('/api/user/timer/stop', 'GET');
     }
     getFirebaseToken() {
-        var promise = new Promise(function(resolve, reject) {
-            $.ajax({
-                method: 'GET',
-                url: '/api/token/firebase',
-                dataType: 'json'
-            }).done(function(data) {
-                resolve(data);
-            });
-        });
-
-        return promise;
+        return this.ajax('/api/token/firebase', 'GET');
     }
-};
+}
 
 module.exports = new API();

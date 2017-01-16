@@ -3,12 +3,18 @@ var Firebase = require('./infra/firebase');
 var Backbone = require('backbone');
 require('backbone.marionette');
 var Repository = require('./domain/repository');
+var Loader = require('./infra/loader');
 var PomodoroListView = require('./ui/view/pomodoro-list-view');
 var TimerView = require('./ui/view/timer-view');
 var TimerControlView = require('./ui/view/timer-control-view');
 var TimerSettingView = require('./ui/view/timer-setting-view');
 var SidenavView = require('./ui/view/sidenav-view');
+var LoaderView = require('./ui/view/loader-view');
 
+
+Loader.start();
+const loader = new LoaderView({el: '#loader', model: Loader});
+loader.render();
 
 var app = new Backbone.Marionette.Application({
     region: 'body',
@@ -19,7 +25,7 @@ var app = new Backbone.Marionette.Application({
                 pomodoro: '#pomodoros',
                 timerControl: '#timer .control',
                 timerSetting: '#timer-setting',
-                sidenav: '#nav',
+                sidenav: '#sidenav',
             }
         });
         var rootView = new RootView();
@@ -66,3 +72,4 @@ Repository.getUser()
         app.start()
     });
 
+Loader.end();
