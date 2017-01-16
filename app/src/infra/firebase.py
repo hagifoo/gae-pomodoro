@@ -4,8 +4,6 @@ import datetime
 import json
 import jws
 import python_jwt as jwt
-import requests
-import time
 
 from google.appengine.api import app_identity
 from google.appengine.api import urlfetch
@@ -77,7 +75,6 @@ def get_timer(user_id):
     token = get_access_token()[0]
     url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
     return json.loads(urlfetch.fetch(url).content)
-    return requests.get('{}{}?access_token={}'.format(FIREBASE_URL, path, token)).json()
 
 
 def start_timer(user_id, start_at):
