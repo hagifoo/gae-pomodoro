@@ -38,6 +38,16 @@ module.exports = Backbone.Marionette.View.extend({
             }
         }
     },
+    modelEvents: {
+        'change:startAt': 'render'
+    },
+
+    serializeData: function() {
+        let j = this.model.toJSON();
+        j.running = this.model.onPomodoro() || this.model.onBreak();
+
+        return j;
+    },
 
     onDomRefresh: function() {
         Materialize.updateTextFields();
