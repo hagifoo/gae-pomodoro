@@ -16,9 +16,11 @@ class TimerStartHandler(BaseHandler):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json.dumps(r))
 
+
+class TimerStartTaskHandler(BaseHandler):
     def post(self):
         user_id = self.request.get('user_id')
-        start_at = self.request.get('start_at')
+        start_at = int(self.request.get('start_at'), 0)
         if not user_id or not start_at:
             return
 
@@ -26,12 +28,12 @@ class TimerStartHandler(BaseHandler):
         if not timer:
             return
 
-        if timer.start_at == 0 or timer.start != start_at:
+        if timer.start_at == 0 or timer.start_at != start_at:
             return
 
         r = {}
         if timer.is_continuous:
-            r = timer.start()
+            r = timer.start(start_at=timer.break_end_at)
 
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json.dumps(r))
@@ -46,7 +48,19 @@ class TimerStopHandler(BaseHandler):
         self.response.out.write(json.dumps(r))
 
 
-class TimerEndHandler(BaseHandler):
+class TimerStopTaskHandler(BaseHandler):
+    def post(self):
+        user_id = self.request.get('user_id')
+        if not user_id:
+            return
+
+        timer = Timer.fetch(user_id)
+        r = timer.stop()
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.out.write(json.dumps(r))
+
+
+class TimerEndTaskHandler(BaseHandler):
     def post(self):
         user_id = self.request.get('user_id')
         if not user_id:
@@ -59,7 +73,9 @@ class TimerEndHandler(BaseHandler):
         r = timer.add_pomodoro()
 
         if timer.is_continuous:
-            timer.set_next()
+            timer.restart_after_break()
+        else:
+            timer.stop_after_break()
 
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.out.write(json.dumps(r))

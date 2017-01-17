@@ -14,8 +14,12 @@ class Timer(object):
         self._break_time = break_time
         self._is_continuous = is_continuous
 
-    def start(self):
-        self._start_at = int(time.mktime(datetime.utcnow().timetuple()))
+    def start(self, start_at=None):
+        if start_at:
+            self._start_at = start_at
+        else:
+            self._start_at = int(time.mktime(datetime.utcnow().timetuple()))
+
         taskqueue.delete_timer_end_task(self._user_id, self.start_at)
         taskqueue.add_timer_end_task(self._user_id, self.start_at, self.pomodoro_end_dt)
         return firebase.start_timer(self._user_id, self.start_at)
@@ -24,8 +28,11 @@ class Timer(object):
         taskqueue.delete_timer_end_task(self._user_id, self.start_at)
         return firebase.stop_timer(self._user_id)
 
-    def set_next(self):
-        taskqueue.add_timer_start_task(self._user_id, self.start_at, self.next_pomodoro_start_dt)
+    def restart_after_break(self):
+        taskqueue.add_timer_start_task(self._user_id, self.start_at, self.break_end_dt)
+
+    def stop_after_break(self):
+        taskqueue.add_timer_stop_task(self._user_id, self.start_at, self.break_end_dt)
 
     def add_pomodoro(self):
         return firebase.add_pomodoro(
@@ -43,7 +50,11 @@ class Timer(object):
         return datetime.fromtimestamp(self._start_at + self._pomodoro_time)
 
     @property
-    def next_pomodoro_start_dt(self):
+    def break_end_at(self):
+        return self._start_at + self._pomodoro_time + self._break_time
+
+    @property
+    def break_end_dt(self):
         return datetime.fromtimestamp(self._start_at + self._pomodoro_time + self._break_time)
 
     @property
@@ -59,9 +70,9 @@ class Timer(object):
         timer_json = firebase.get_timer(user_id)
         return Timer(
             user_id,
-            start_at=timer_json.get('startAt'),
-            pomodoro_time=timer_json.get('pomodoroTime'),
-            break_time=timer_json.get('breakTime'),
+            start_at=int(timer_json.get('startAt')),
+            pomodoro_time=int(timer_json.get('pomodoroTime')),
+            break_time=int(timer_json.get('breakTime')),
             is_continuous=timer_json.get('isContinuous'),
         )
 

@@ -18,6 +18,7 @@ config = {
 
 ### Main
 app = webapp2.WSGIApplication([
+    # API
     webapp2.Route(r'/api/user',
                   'application.handler.UserHandler'),
     webapp2.Route(r'/api/token/firebase',
@@ -26,8 +27,14 @@ app = webapp2.WSGIApplication([
                   'application.handler.timer.TimerStartHandler'),
     webapp2.Route(r'/api/user/timer/stop',
                   'application.handler.timer.TimerStopHandler'),
-    webapp2.Route(r'/api/user/timer/end',
-                  'application.handler.timer.TimerEndHandler'),
+    # Task
+    webapp2.Route(r'/api/task/user/timer/start',
+                  'application.handler.timer.TimerStartTaskHandler'),
+    webapp2.Route(r'/api/task/user/timer/stop',
+                  'application.handler.timer.TimerStopTaskHandler'),
+    webapp2.Route(r'/api/task/user/timer/end',
+                  'application.handler.timer.TimerEndTaskHandler'),
+    # OAuth
     webapp2.Route(r'/signin/google',
                   'application.handler.auth.SignInHandler'),
     webapp2.Route(r'/auth/google',

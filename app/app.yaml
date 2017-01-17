@@ -3,6 +3,10 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /api/task/.*
+  script: src.main.app
+  login: admin
+
 - url: /api/.*
   script: src.main.app
 
