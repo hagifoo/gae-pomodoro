@@ -1,12 +1,15 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
-const Repository = require('../../domain/repository');
-const TeamItemViewTemplate = require('../template/team-item-view-template.hbs');
-const Template = require('../template/sidenav-view-template.hbs');
+const Repository = require('domain/repository');
+const TeamItemViewTemplate = require('ui/template/team-item-view-template.hbs');
+const Template = require('ui/template/sidenav-view-template.hbs');
 
 const TeamItemView = Backbone.Marionette.View.extend({
     template: TeamItemViewTemplate,
-    tagName: 'li'
+    tagName: 'li',
+    modelEvents: {
+        'change': 'render'
+    }
 });
 
 const TeamListView = Backbone.Marionette.CollectionView.extend({

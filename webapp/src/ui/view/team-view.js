@@ -1,11 +1,11 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
-const Repository = require('../../domain/repository');
-const PomodoroListView = require('./team-pomodoro-list-view');
-const TimerView = require('./timer-view');
-const TimerControlView = require('./timer-control-view');
-const TimerSettingView = require('./timer-setting-view');
-const Template = require('../template/team-view-template.hbs');
+const PomodoroListView = require('ui/view/team-pomodoro-list-view');
+const TimerView = require('ui/view/timer-view');
+const TimerControlView = require('ui/view/timer-control-view');
+const TimerSettingView = require('ui/view/timer-setting-view');
+const TeamSettingView = require('ui/view/team-setting-view');
+const Template = require('ui/template/team-view-template.hbs');
 
 module.exports = Backbone.Marionette.View.extend({
     template: Template,
@@ -14,6 +14,7 @@ module.exports = Backbone.Marionette.View.extend({
         timerCircle: '#timer .circle',
         timerControl: '#timer .control',
         timerSetting: '#timer-setting',
+        teamSetting: '#team-setting'
     },
     onRender: function() {
         this.model.getTodayPomodoros()
@@ -34,6 +35,7 @@ module.exports = Backbone.Marionette.View.extend({
                 }));
                 this.showChildView('timerControl', new TimerControlView({model: timer}));
                 this.showChildView('timerSetting', new TimerSettingView({model: timer}));
+                this.showChildView('teamSetting', new TeamSettingView({model: this.model}));
             });
     }
 });

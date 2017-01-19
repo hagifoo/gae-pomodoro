@@ -20,5 +20,9 @@ module.exports = User.extend({
 
     _pomodoroPath: function(id) {
         return `/teamPomodoros/${this.id}/${id}`;
+    },
+
+    update: function(data) {
+        return Firebase.update(this._path(), data);
     }
 });

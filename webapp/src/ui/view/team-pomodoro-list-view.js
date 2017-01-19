@@ -23,5 +23,8 @@ var PomodoroItemView = Backbone.Marionette.View.extend({
 module.exports = Backbone.Marionette.CompositeView.extend({
     childView: PomodoroItemView,
     childViewContainer: '.pomodoro-list',
-    template: ListViewTemplate
+    template: ListViewTemplate,
+    modelEvents: {
+        'change:name': 'render'
+    }
 });

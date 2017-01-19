@@ -84,7 +84,7 @@ class Repository {
                             model: Team
                         }))(t);
                     } else {
-                        this._teams.add(t);
+                        this._teams.add(t, {merge: true});
                     }
                     resolve(t);
                 });
