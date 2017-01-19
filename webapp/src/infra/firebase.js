@@ -90,6 +90,23 @@ class Firebase {
                     });
             });
     }
+    listenTeam(teamId, callback) {
+        Loader.start();
+        firebase.database().ref(`/teams/${teamId}`)
+            .on('value', function (snapshot) {
+                Loader.end();
+                let teamId = snapshot.key;
+                callback(teamId, snapshot.val());
+            });
+    }
+    listenTeamTimer(team, callback) {
+        Loader.start();
+        var ref = firebase.database().ref(`teams/${team.id}/timer`);
+        ref.on('value', function (snapshot) {
+            Loader.end();
+            callback(snapshot.val());
+        });
+    }
     updateTeam(target, team) {
         var updates = {};
         _.each(target, (v, k)=> {

@@ -51,6 +51,28 @@ class Repository {
             this._timer.set(timer);
         }
     }
+    getTeamTimer(team) {
+        var promise = new Promise((resolve, reject) => {
+            if(team._timer) {
+                resolve(team._timer);
+            } else {
+                Firebase.listenTeamTimer(team, timer => {
+                    this.updateTeamTimer(team, timer);
+                    resolve(team._timer);
+                })
+            }
+        });
+
+        return promise;
+    }
+    updateTeamTimer(team, timer) {
+        if(!team._timer) {
+            team._timer = new Timer(timer);
+            team._timer.set({user: team});
+        } else {
+            team._timer.set(timer);
+        }
+    }
     getPomodoros() {
         var promise = new Promise((resolve, reject) => {
             if(this._pomodoros) {
@@ -119,6 +141,20 @@ class Repository {
 
         return promise;
     }
+    getTeam(teamId) {
+        var promise = new Promise((resolve, reject) => {
+            if(this._teams && this._teams.get(teamId)) {
+                resolve(this._teams.get(teamId));
+            } else {
+                Firebase.listenTeam(teamId, (teamId, teamJson) => {
+                    let team = this.updateTeams(teamId, teamJson);
+                    resolve(team);
+                });
+            }
+        });
+
+        return promise;
+    }
     updateTeams(teamId, teamJson) {
         let t = this.teamObjectToTeam(teamId, teamJson);
         if(!this._teams) {
@@ -128,6 +164,7 @@ class Repository {
         } else {
             this._teams.add(t);
         }
+        return t;
     }
     teamObjectToTeam(teamId, teamJson) {
         let j = _.extend(teamJson, {id: teamId});
