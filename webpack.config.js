@@ -11,6 +11,9 @@ module.exports = {
         filename: '[name].js',
         publicPath: ''
     },
+    resolve: {
+        root: path.join(__dirname, 'webapp', 'src')
+    },
     devtool: "#source-map",
     devServer: {
         contentBase: path.join(__dirname, 'app', 'assets'),

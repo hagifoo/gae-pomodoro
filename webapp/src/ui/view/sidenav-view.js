@@ -27,7 +27,7 @@ module.exports = Backbone.Marionette.View.extend({
     },
 
     onRender: function() {
-        Repository.getTeams()
+        Repository.getUserTeams(this.model)
             .then(teams => {
                 this.showChildView('teams', new TeamListView({collection: teams}));
             });

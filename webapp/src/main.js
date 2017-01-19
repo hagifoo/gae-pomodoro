@@ -36,7 +36,10 @@ var app = new Backbone.Marionette.Application({
             });
 
         Router.on('user', () => {
-            rootView.showChildView('app', new UserView());
+            Repository.getUser()
+                .then(user => {
+                    rootView.showChildView('app', new UserView({model: user}));
+                });
         });
 
         Router.on('team', (teamId) => {

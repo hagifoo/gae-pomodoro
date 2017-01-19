@@ -16,7 +16,7 @@ module.exports = Backbone.Marionette.View.extend({
         timerSetting: '#timer-setting',
     },
     onRender: function() {
-        Repository.getPomodoros()
+        this.model.getTodayPomodoros()
             .then(pomodoros => {
                 this.showChildView('pomodoro', new PomodoroListView({
                     model: this.model,
@@ -24,7 +24,7 @@ module.exports = Backbone.Marionette.View.extend({
                 }));
             });
 
-        Repository.getTeamTimer(this.model)
+        this.model.getTimer()
             .then(timer => {
                 this.showChildView('timerCircle', new TimerView({
                     model: timer,

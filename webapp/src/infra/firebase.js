@@ -8,7 +8,7 @@ class Firebase {
         Loader.start();
         firebase.initializeApp(config);
 
-        var promise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             firebase.auth().onAuthStateChanged(user => {
                 if (!user) {
                     API.getFirebaseToken()
@@ -25,95 +25,49 @@ class Firebase {
                 }
             });
         });
-
-        return promise;
     }
 
     signOut(config) {
         firebase.initializeApp(config);
         return firebase.auth().signOut();
     }
+
     signInWithCustomToken(token) {
         return firebase.auth().signInWithCustomToken(token);
     }
-    listenTimer(user, callback) {
+
+    listen(path, callback, options) {
         Loader.start();
-        var ref = firebase.database().ref(`users/${user.id}/timer`);
+        let ref = firebase.database().ref(path);
         ref.on('value', function (snapshot) {
-            Loader.end();
-            callback(snapshot.val());
-        });
+                Loader.end();
+                callback(snapshot.val());
+            });
     }
-    updateTimer(target, user) {
-        var updates = {};
-        _.each(target, (v, k)=> {
-            updates[`users/${user.id}/timer/${k}`] = v;
-        });
-        firebase.database().ref().update(updates);
-    }
-    listenPomodoros(user, callback, fromStartAt) {
+
+    listenOrderByKey(path, callback, options) {
         Loader.start();
-        var ref = firebase.database().ref(`/pomodoros/${user.id}`);
-        if(fromStartAt) {
-            ref = ref.orderByKey().startAt('' + fromStartAt);
+        let ref = firebase.database().ref(path).orderByKey();
+        if(options.startAt) {
+            ref = ref.startAt(options.startAt);
         }
         ref.on('value', function (snapshot) {
             Loader.end();
             callback(snapshot.val());
         });
     }
-    updatePomodoros(target, user) {
-        var updates = {};
-        _.each(target, (v, k)=> {
-            updates[`/pomodoros/${user.id}/${k}`] = v;
+
+    update(path, data) {
+        let updates = {};
+        _.each(data, (v, k)=> {
+            updates[`${path}/${k}`] = v;
         });
         firebase.database().ref().update(updates);
     }
-    addTeam(data) {
-        return firebase.database().ref('/teams').push(data);
+
+    push(path, data) {
+        return firebase.database().ref(path).push(data);
     }
-    addUserTeam(user, teamKey) {
-        return firebase.database().ref(`/userTeams/${user.id}`)
-            .update({[teamKey]: true});
-    }
-    listenTeams(user, callback) {
-        Loader.start();
-        firebase.database().ref(`/userTeams/${user.id}`)
-            .on('child_added', function (snapshot) {
-                Loader.start();
-                Loader.end();
-                let teamId = snapshot.key;
-                firebase.database().ref(`/teams/${teamId}`)
-                    .on('value', function (snapshot) {
-                        Loader.end();
-                        callback(teamId, snapshot.val());
-                    });
-            });
-    }
-    listenTeam(teamId, callback) {
-        Loader.start();
-        firebase.database().ref(`/teams/${teamId}`)
-            .on('value', function (snapshot) {
-                Loader.end();
-                let teamId = snapshot.key;
-                callback(teamId, snapshot.val());
-            });
-    }
-    listenTeamTimer(team, callback) {
-        Loader.start();
-        var ref = firebase.database().ref(`teams/${team.id}/timer`);
-        ref.on('value', function (snapshot) {
-            Loader.end();
-            callback(snapshot.val());
-        });
-    }
-    updateTeam(target, team) {
-        var updates = {};
-        _.each(target, (v, k)=> {
-            updates[`/teams/${team.id}/${k}`] = v;
-        });
-        firebase.database().ref().update(updates);
-    }
-};
+}
 
 module.exports = new Firebase();

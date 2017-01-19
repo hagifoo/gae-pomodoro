@@ -16,14 +16,14 @@ module.exports = Backbone.Marionette.View.extend({
         timerSetting: '#timer-setting',
     },
     onRender: function() {
-        Repository.getPomodoros()
+        this.model.getTodayPomodoros()
             .then(pomodoros => {
                 this.showChildView('pomodoro', new PomodoroListView({
                     collection: pomodoros
                 }));
             });
 
-        Repository.getTimer()
+        this.model.getTimer()
             .then(timer => {
                 this.showChildView('timerCircle', new TimerView({
                     model: timer,

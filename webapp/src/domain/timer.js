@@ -1,7 +1,6 @@
-var Backbone = require('backbone');
-var Moment = require('moment');
-var API = require('../infra/api');
-var Firebase = require('../infra/firebase');
+const Backbone = require('backbone');
+const Moment = require('moment');
+const API = require('infra/api');
 
 module.exports = Backbone.Model.extend({
     defaults: {
@@ -22,15 +21,15 @@ module.exports = Backbone.Model.extend({
     },
 
     setPomodoroTime: function (time) {
-        Firebase.updateTimer({pomodoroTime: time}, this.get('user'));
+        this.get('user').updateTimer({pomodoroTime: time});
     },
 
     setBreakTime: function (time) {
-        Firebase.updateTimer({breakTime: time}, this.get('user'));
+        this.get('user').updateTimer({breakTime: time});
     },
 
     setContinuous: function (isContinuous) {
-        Firebase.updateTimer({isContinuous: isContinuous}, this.get('user'));
+        this.get('user').updateTimer({isContinuous: isContinuous});
     },
 
     getTotalTime: function() {

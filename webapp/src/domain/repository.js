@@ -1,21 +1,30 @@
 const Backbone = require('backbone');
 const _ = require('underscore');
-const Moment = require('moment');
 const Firebase = require('../infra/firebase');
 const API = require('../infra/api');
 const User = require('./user');
-const Timer = require('./timer');
-const Pomodoro = require('./pomodoro');
 const Team = require('./team');
 
 class Repository {
     constructor() {
         this._user = null;
-        this._timer = null;
-        this._pomodoros = null;
+        this._teams = null;
     }
+
+    _userTeamPath(userId) {
+        return `/userTeams/${userId}`;
+    }
+
+    _teamPath(teamId) {
+        return `/teams/${teamId}`;
+    }
+
+    _teamsPath() {
+        return `/teams`;
+    }
+
     getUser() {
-        var promise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if(this._user) {
                 resolve(this._user);
             } else {
@@ -26,148 +35,65 @@ class Repository {
                     });
             }
         });
+    }
 
-        return promise;
-    }
-    getTimer() {
-        var promise = new Promise((resolve, reject) => {
-            if(this._timer) {
-                resolve(this._timer);
-            } else {
-                Firebase.listenTimer(this._user, timer => {
-                    this.updateTimer(timer);
-                    resolve(this._timer);
-                })
-            }
-        });
-
-        return promise;
-    }
-    updateTimer(timer) {
-        if(!this._timer) {
-            this._timer = new Timer(timer);
-            this._timer.set({user: this._user});
-        } else {
-            this._timer.set(timer);
-        }
-    }
-    getTeamTimer(team) {
-        var promise = new Promise((resolve, reject) => {
-            if(team._timer) {
-                resolve(team._timer);
-            } else {
-                Firebase.listenTeamTimer(team, timer => {
-                    this.updateTeamTimer(team, timer);
-                    resolve(team._timer);
-                })
-            }
-        });
-
-        return promise;
-    }
-    updateTeamTimer(team, timer) {
-        if(!team._timer) {
-            team._timer = new Timer(timer);
-            team._timer.set({user: team});
-        } else {
-            team._timer.set(timer);
-        }
-    }
-    getPomodoros() {
-        var promise = new Promise((resolve, reject) => {
-            if(this._pomodoros) {
-                resolve(this._pomodoros);
-            } else {
-                Firebase.listenPomodoros(this._user, pomodoros => {
-                    this.updatePomodoros(pomodoros);
-                    resolve(this._pomodoros);
-                }, Moment(Moment().format('YYYY-MM-DD')).unix())
-            }
-        });
-
-        return promise;
-    }
-    updatePomodoros(pomodoros) {
-        let ps = this.pomodoroObjectToPomodoro(pomodoros);
-        if(!this._pomodoros) {
-            this._pomodoros = new (Backbone.Collection.extend({
-                model: Pomodoro
-            }))(ps);
-        } else {
-            this._pomodoros.set(ps);
-        }
-    }
-    pomodoroObjectToPomodoro(pomodoros) {
-        var pomodoroList = [];
-        return _.map(pomodoros, (v, id) => {
-            let j = {
-                id: id,
-                startAt: id
-            };
-            j = _.extend(j, v);
-            return new Pomodoro(j);
-        });
-    }
-    addTeam() {
-        var promise = new Promise((resolve, reject) => {
+    addTeam(user) {
+        return new Promise((resolve, reject) => {
             let data = {
                 name: 'new team',
                 users: {
-                    [this._user.id]: {
+                    [user.id]: {
                         join: true
                     }
                 }
             };
-            let team = Firebase.addTeam(data);
-            Firebase.addUserTeam(this._user, team.key)
+            let team = Firebase.push(this._teamsPath(), data);
+            Firebase.update(this._userTeamPath(user.id), {[team.key]: true})
                 .then(() => {
                     resolve(team.key);
                 });
         });
-
-        return promise;
     }
-    getTeams() {
-        var promise = new Promise((resolve, reject) => {
+
+    getUserTeams(user) {
+        return new Promise((resolve, reject) => {
             if(this._teams) {
                 resolve(this._teams);
             } else {
-                Firebase.listenTeams(this._user, (teamId, teamJson) => {
-                    this.updateTeams(teamId, teamJson);
-                    resolve(this._teams);
+                Firebase.listen(this._userTeamPath(user.id), teamJson => {
+                    _.each(teamJson, (v, id) => {
+                        this.getTeam(id)
+                            .then(team => {
+                                resolve(this._teams);
+                            })
+                    });
                 });
             }
         });
-
-        return promise;
     }
+
     getTeam(teamId) {
-        var promise = new Promise((resolve, reject) => {
+         return new Promise((resolve, reject) => {
             if(this._teams && this._teams.get(teamId)) {
                 resolve(this._teams.get(teamId));
             } else {
-                Firebase.listenTeam(teamId, (teamId, teamJson) => {
-                    let team = this.updateTeams(teamId, teamJson);
-                    resolve(team);
+                Firebase.listen(this._teamPath(teamId), teamJson => {
+                    let t = this._j2t(teamId, teamJson);
+                    if(!this._teams) {
+                        this._teams = new (Backbone.Collection.extend({
+                            model: Team
+                        }))(t);
+                    } else {
+                        this._teams.add(t);
+                    }
+                    resolve(t);
                 });
             }
         });
+    }
 
-        return promise;
-    }
-    updateTeams(teamId, teamJson) {
-        let t = this.teamObjectToTeam(teamId, teamJson);
-        if(!this._teams) {
-            this._teams = new (Backbone.Collection.extend({
-                model: Team
-            }))(t);
-        } else {
-            this._teams.add(t);
-        }
-        return t;
-    }
-    teamObjectToTeam(teamId, teamJson) {
-        let j = _.extend(teamJson, {id: teamId});
+    _j2t(id, data) {
+        let j = _.extend(data, {id: id});
         return new Team(j);
     }
 }
