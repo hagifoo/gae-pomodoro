@@ -69,6 +69,34 @@ class Firebase {
         });
         firebase.database().ref().update(updates);
     }
+    addTeam(data) {
+        return firebase.database().ref('/teams').push(data);
+    }
+    addUserTeam(user, teamKey) {
+        return firebase.database().ref(`/userTeams/${user.id}`)
+            .update({[teamKey]: true});
+    }
+    listenTeams(user, callback) {
+        Loader.start();
+        firebase.database().ref(`/userTeams/${user.id}`)
+            .on('child_added', function (snapshot) {
+                Loader.start();
+                Loader.end();
+                let teamId = snapshot.key;
+                firebase.database().ref(`/teams/${teamId}`)
+                    .on('value', function (snapshot) {
+                        Loader.end();
+                        callback(teamId, snapshot.val());
+                    });
+            });
+    }
+    updateTeam(target, team) {
+        var updates = {};
+        _.each(target, (v, k)=> {
+            updates[`/teams/${team.id}/${k}`] = v;
+        });
+        firebase.database().ref().update(updates);
+    }
 };
 
 module.exports = new Firebase();

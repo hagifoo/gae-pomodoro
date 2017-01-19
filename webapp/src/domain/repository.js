@@ -1,11 +1,12 @@
-var Backbone = require('backbone');
-var _ = require('underscore');
-var Moment = require('moment');
-var Firebase = require('../infra/firebase');
-var API = require('../infra/api');
-var User = require('./user');
-var Timer = require('./timer');
-var Pomodoro = require('./pomodoro');
+const Backbone = require('backbone');
+const _ = require('underscore');
+const Moment = require('moment');
+const Firebase = require('../infra/firebase');
+const API = require('../infra/api');
+const User = require('./user');
+const Timer = require('./timer');
+const Pomodoro = require('./pomodoro');
+const Team = require('./team');
 
 class Repository {
     constructor() {
@@ -84,6 +85,53 @@ class Repository {
             j = _.extend(j, v);
             return new Pomodoro(j);
         });
+    }
+    addTeam() {
+        var promise = new Promise((resolve, reject) => {
+            let data = {
+                name: 'new team',
+                users: {
+                    [this._user.id]: {
+                        join: true
+                    }
+                }
+            };
+            let team = Firebase.addTeam(data);
+            Firebase.addUserTeam(this._user, team.key)
+                .then(() => {
+                    resolve(team.key);
+                });
+        });
+
+        return promise;
+    }
+    getTeams() {
+        var promise = new Promise((resolve, reject) => {
+            if(this._teams) {
+                resolve(this._teams);
+            } else {
+                Firebase.listenTeams(this._user, (teamId, teamJson) => {
+                    this.updateTeams(teamId, teamJson);
+                    resolve(this._teams);
+                });
+            }
+        });
+
+        return promise;
+    }
+    updateTeams(teamId, teamJson) {
+        let t = this.teamObjectToTeam(teamId, teamJson);
+        if(!this._teams) {
+            this._teams = new (Backbone.Collection.extend({
+                model: Team
+            }))(t);
+        } else {
+            this._teams.add(t);
+        }
+    }
+    teamObjectToTeam(teamId, teamJson) {
+        let j = _.extend(teamJson, {id: teamId});
+        return new Team(j);
     }
 }
 

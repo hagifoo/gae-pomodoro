@@ -2,14 +2,13 @@ var FirebaseConfig = require('./config/firebase');
 var Firebase = require('./infra/firebase');
 var Backbone = require('backbone');
 require('backbone.marionette');
+var Router = require('./application/router');
 var Repository = require('./domain/repository');
 var Loader = require('./infra/loader');
-var PomodoroListView = require('./ui/view/pomodoro-list-view');
-var TimerView = require('./ui/view/timer-view');
-var TimerControlView = require('./ui/view/timer-control-view');
-var TimerSettingView = require('./ui/view/timer-setting-view');
 var SidenavView = require('./ui/view/sidenav-view');
 var LoaderView = require('./ui/view/loader-view');
+var UserView = require('./ui/view/user-view');
+var TeamView = require('./ui/view/team-view');
 
 
 Loader.start();
@@ -22,9 +21,7 @@ var app = new Backbone.Marionette.Application({
         var RootView = Backbone.Marionette.View.extend({
             el: '#root',
             regions: {
-                pomodoro: '#pomodoros',
-                timerControl: '#timer .control',
-                timerSetting: '#timer-setting',
+                app: '#app',
                 sidenav: '#sidenav',
             }
         });
@@ -35,24 +32,21 @@ var app = new Backbone.Marionette.Application({
             .then(user => {
                 rootView.showChildView('sidenav', new SidenavView({
                     model: user
-                }))
-            });
-
-        Repository.getPomodoros()
-            .then(pomodoros => {
-                rootView.showChildView('pomodoro', new PomodoroListView({
-                    collection: pomodoros
                 }));
             });
 
-        Repository.getTimer()
-            .then(timer => {
-                var timerView = new TimerView(timer, 400, 400, '#timer .circle');
-                timerView.render();
+        Router.on('user', () => {
+            rootView.showChildView('app', new UserView());
+        });
 
-                rootView.showChildView('timerControl', new TimerControlView({model: timer}));
-                rootView.showChildView('timerSetting', new TimerSettingView({model: timer}));
-            });
+        Router.on('team', (teamId) => {
+            Repository.getTeams()
+                .then(teams => {
+                    rootView.showChildView('app', new TeamView({model: teams.get(teamId)}));
+                });
+        });
+
+        Backbone.history.start();
     }
 });
 
