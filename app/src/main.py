@@ -12,7 +12,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 config = {
     'webapp2_extras.sessions': {
         'secret_key': 'abcdefg',
-        'session_max_age': 3600
+        'session_max_age': 86400
     }
 }
 
