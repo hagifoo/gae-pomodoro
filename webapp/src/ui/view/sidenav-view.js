@@ -19,7 +19,8 @@ module.exports = Backbone.Marionette.View.extend({
         addTeamButton: '.btn.add-team'
     },
     events: {
-        'click @ui.addTeamButton': 'addTeam'
+        'click @ui.addTeamButton': 'addTeam',
+        'click .teams': 'closeSidenav'
     },
     regions: {
         teams: '.teams'
@@ -38,5 +39,9 @@ module.exports = Backbone.Marionette.View.extend({
 
     addTeam: function() {
         Repository.addTeam();
+    },
+
+    closeSidenav: function() {
+        this.$('.sidenav-button').sideNav('hide');
     }
 });
