@@ -11,6 +11,7 @@ module.exports = Backbone.Marionette.View.extend({
     template: Template,
     regions: {
         pomodoro: '#pomodoros',
+        timerCircle: '#timer .circle',
         timerControl: '#timer .control',
         timerSetting: '#timer-setting',
     },
@@ -24,9 +25,12 @@ module.exports = Backbone.Marionette.View.extend({
 
         Repository.getTimer()
             .then(timer => {
-                const timerView = new TimerView(timer, 400, 400, '#timer .circle');
-                timerView.render();
-
+                this.showChildView('timerCircle', new TimerView({
+                    model: timer,
+                    width: 400,
+                    height: 400,
+                    selector: '#timer .circle'
+                }));
                 this.showChildView('timerControl', new TimerControlView({model: timer}));
                 this.showChildView('timerSetting', new TimerSettingView({model: timer}));
             });
