@@ -59,7 +59,7 @@ module.exports = Backbone.Model.extend({
                 resolve(this._pomodoros);
             } else {
                 Firebase.listenOrderByKey(this._pomodorosPath(), pomodorosJson => {
-                    let ps = _.map(pomodorosJson, this._j2p);
+                    let ps = _.map(pomodorosJson, this._j2p, this);
                     if(!this._pomodoros) {
                         this._pomodoros = new (Backbone.Collection.extend({
                             model: this.pomodoroClass
@@ -80,6 +80,7 @@ module.exports = Backbone.Model.extend({
             startAt: id
         };
         j = _.extend(j, data);
+        j.owner = this;
         return new Pomodoro(j);
     },
 

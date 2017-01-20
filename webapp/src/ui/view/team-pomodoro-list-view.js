@@ -1,23 +1,97 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
 const Moment = require('moment');
+const Repository = require('domain/repository');
+const FeelingViewTemplate = require('../template/team-pomodoro-feeling-view-template.hbs');
 const ItemViewTemplate = require('../template/team-pomodoro-item-view-template.hbs');
 const ListViewTemplate = require('../template/team-pomodoro-list-view-template.hbs');
 
+const FeelingView = Backbone.Marionette.View.extend({
+    template: FeelingViewTemplate,
+    tagName: 'span',
+    serializeData: function() {
+        let j = this.model.toJSON();
+        j.feelingColor = this.getFeelingColor();
+
+        return j;
+    },
+    getFeelingColor: function() {
+        let f = this.getOption('pomodoro').getFeeling(this.model.id);
+        if(f == 'good') {
+            return 'teal lighten-2';
+        }
+        else if(f == 'bad') {
+            return 'red lighten-2';
+        }
+        else {
+            return 'grey';
+        }
+    }
+});
+
+const FeelingListView = Backbone.Marionette.CollectionView.extend({
+    childView: FeelingView,
+    childViewOptions: function() {
+        return {
+            pomodoro: this.getOption('pomodoro')
+        }
+    },
+    filter: function(child, index, collection) {
+        return this.getOption('pomodoro').isAttend(child.id);
+    }
+});
+
 const PomodoroItemView = Backbone.Marionette.View.extend({
     template: ItemViewTemplate,
+    events: {
+        'click .btn.good': 'feelGood',
+        'click .btn.bad': 'feelBad'
+    },
+    modelEvents: {
+        'change:attendee': 'render'
+    },
+    regions: {
+        feelings: '.user-feelings'
+    },
+    childViewOptions: function() {
+        return {
+            user: this.getOption('user')
+        }
+    },
+
+    feelGood: function() {
+        this.model.updateTeamFeeling(this.getOption('user').id, 'good');
+    },
+
+    feelBad: function() {
+        this.model.updateTeamFeeling(this.getOption('user').id, 'bad');
+    },
 
     serializeData: function() {
+        let j = this.model.toJSON();
         let time = this.model.get('time');
         let startAt = Moment.unix(this.model.get('startAt'));
         let endAt = Moment(startAt);
         endAt.add(time, 's');
-        return {
-            startAt: startAt.format('HH:mm'),
-            endAt: endAt.format('HH:mm'),
-            timeMin: Math.floor(time / 60)
-        };
+
+        j.startAt = startAt.format('HH:mm');
+        j.endAt = endAt.format('HH:mm');
+        j.timeMin = Math.floor(time / 60);
+        j.setFeeling = this.model.getFeeling(this.getOption('user').id) == 'none';
+
+        return j;
+    },
+
+    onRender: function() {
+         Repository.getMembers(this.getOption('team'))
+             .then(members => {
+                 this.showChildView('feelings', new FeelingListView({
+                     collection: members,
+                     pomodoro: this.model
+                 }))
+             });
     }
+
 });
 
 module.exports = Backbone.Marionette.CompositeView.extend({
@@ -26,6 +100,12 @@ module.exports = Backbone.Marionette.CompositeView.extend({
     template: ListViewTemplate,
     modelEvents: {
         'change:name': 'render'
+    },
+    childViewOptions: function() {
+        return {
+            team: this.model,
+            user: this.getOption('user')
+        }
     },
     serializeData: function() {
         let j = this.model.toJSON();

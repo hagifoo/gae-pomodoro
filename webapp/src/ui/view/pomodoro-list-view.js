@@ -6,17 +6,50 @@ const ListViewTemplate = require('../template/pomodoro-list-view-template.hbs');
 
 const PomodoroItemView = Backbone.Marionette.View.extend({
     template: ItemViewTemplate,
+    className: 'valign-wrapper',
+    events: {
+        'click .btn.good': 'feelGood',
+        'click .btn.bad': 'feelBad'
+    },
+    modelEvents: {
+        'change:feeling': 'render'
+    },
+
+    feelGood: function() {
+        this.model.updateUserFeeling('good');
+    },
+
+    feelBad: function() {
+        this.model.updateUserFeeling('bad');
+    },
 
     serializeData: function() {
+        let j = this.model.toJSON();
         let time = this.model.get('time');
         let startAt = Moment.unix(this.model.get('startAt'));
         let endAt = Moment(startAt);
         endAt.add(time, 's');
-        return {
-            startAt: startAt.format('HH:mm'),
-            endAt: endAt.format('HH:mm'),
-            timeMin: Math.floor(time / 60)
-        };
+
+        j.startAt = startAt.format('HH:mm');
+        j.endAt = endAt.format('HH:mm');
+        j.timeMin = Math.floor(time / 60);
+        j.setFeeling = j.feeling != 'good' && j.feeling != 'bad';
+        j.feelingColor = this.getFeelingColor();
+
+        return j;
+    },
+
+    getFeelingColor: function() {
+        let f = this.model.get('feeling');
+        if(f == 'good') {
+            return 'teal lighten-2';
+        }
+        else if(f == 'bad') {
+            return 'red lighten-2';
+        }
+        else {
+            return 'grey';
+        }
     }
 });
 

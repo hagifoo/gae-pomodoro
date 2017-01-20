@@ -1,1 +1,18 @@
-<span class="pomodoro-time grey-text">{{startAt}} - {{endAt}} ({{timeMin}} min)</span>
+<div class="valign-wrapper">
+<span class="pomodoro-feel circle amber lighten-2"
+      style="display: inline-block; width: 16px; height: 16px;
+margin: 4px;">
+</span>
+<span class="pomodoro-time grey-text">
+    {{startAt}} - {{endAt}} ({{timeMin}} min)
+</span>
+{{#if setFeeling}}
+<span class="pomodoro-feel good btn btn-flat btn-small teal-text text-lighten-2">
+<i class="material-icons">thumb_up</i>
+</span>
+<span class="pomodoro-feel bad btn btn-flat btn-small red-text text-lighten-2">
+<i class="material-icons">thumb_down</i>
+</span>
+{{/if}}
+</div>
+<div class="user-feelings valign-wrapper" style="padding-left: 16px;"></div>
