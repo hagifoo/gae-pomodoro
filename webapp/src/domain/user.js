@@ -2,6 +2,7 @@ const Backbone = require('backbone');
 const _ = require('underscore');
 const Moment = require('moment');
 const Firebase = require('infra/firebase');
+const API = require('infra/api/user');
 const Timer = require('domain/timer');
 const Pomodoro = require('domain/pomodoro');
 
@@ -12,17 +13,18 @@ module.exports = Backbone.Model.extend({
     },
     timerClass: Timer,
     pomodoroClass: Pomodoro,
+    api: API,
 
     _timerPath: function() {
         return `/users/${this.id}/timer`;
     },
 
     _pomodorosPath: function() {
-        return `/pomodoros/${this.id}`;
+        return `/userPomodoros/${this.id}`;
     },
 
     _pomodoroPath: function(id) {
-        return `/pomodoros/${this.id}/${id}`;
+        return `/userPomodoros/${this.id}/${id}`;
     },
 
     /**
@@ -37,6 +39,7 @@ module.exports = Backbone.Model.extend({
                     if(!this._timer) {
                         this._timer = new this.timerClass(timerJson);
                         this._timer.set({user: this});
+                        this._timer.set({api: this.api});
                     } else {
                         this._timer.set(timerJson);
                     }

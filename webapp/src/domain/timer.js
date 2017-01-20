@@ -1,6 +1,5 @@
 const Backbone = require('backbone');
 const Moment = require('moment');
-const API = require('infra/api');
 
 module.exports = Backbone.Model.extend({
     defaults: {
@@ -13,11 +12,11 @@ module.exports = Backbone.Model.extend({
     },
 
     start: function () {
-        API.startTimer();
+        this.get('api').startTimer(this.get('user').id);
     },
 
     stop: function () {
-        API.stopTimer();
+        this.get('api').stopTimer(this.get('user').id);
     },
 
     setPomodoroTime: function (time) {

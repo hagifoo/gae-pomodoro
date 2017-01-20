@@ -1,9 +1,9 @@
 const Backbone = require('backbone');
 const _ = require('underscore');
-const Firebase = require('../infra/firebase');
-const API = require('../infra/api');
-const User = require('./user');
-const Team = require('./team');
+const Firebase = require('infra/firebase');
+const API = require('infra/api/user');
+const User = require('domain/user');
+const Team = require('domain/team');
 
 class Repository {
     constructor() {

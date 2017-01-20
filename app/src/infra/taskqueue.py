@@ -1,47 +1,67 @@
 from google.appengine.api import taskqueue
 
 
-def get_timer_start_task_name(user_id, start_at):
-    return 'timerstart_{}_{}'.format(user_id, start_at)
+class TimerTaskqueue(object):
+    NAME_PREFIX = 'timer'
+    PATH = '/api/task/timer'
 
-def get_timer_stop_task_name(user_id, start_at):
-    return 'timerstop_{}_{}'.format(user_id, start_at)
+    def __init__(self, id_):
+        self._id = id_
 
-def get_timer_end_task_name(user_id, start_at):
-    return 'timerend_{}_{}'.format(user_id, start_at)
+    def get_timer_start_task_name(self, start_at):
+        return '{}start_{}_{}'.format(
+            self.NAME_PREFIX, self._id, start_at)
 
-def add_timer_end_task(user_id, start_at, eta):
-    taskqueue.add(
-        url='/api/task/user/timer/end',
-        target='default',
-        name=get_timer_end_task_name(user_id, start_at),
-        params={'user_id': user_id},
-        queue_name='timer',
-        eta=eta
-    )
+    def get_timer_stop_task_name(self, start_at):
+        return '{}stop_{}_{}'.format(
+            self.NAME_PREFIX, self._id, start_at)
 
-def add_timer_start_task(user_id, start_at, eta):
-    taskqueue.add(
-        url='/api/task/user/timer/start',
-        target='default',
-        name=get_timer_start_task_name(user_id, start_at),
-        params={'user_id': user_id, 'start_at': start_at},
-        queue_name='timer',
-        eta=eta
-    )
+    def get_timer_end_task_name(self, start_at):
+        return '{}end_{}_{}'.format(
+            self.NAME_PREFIX, self._id, start_at)
 
-def add_timer_stop_task(user_id, start_at, eta):
-    taskqueue.add(
-        url='/api/task/user/timer/stop',
-        target='default',
-        name=get_timer_stop_task_name(user_id, start_at),
-        params={'user_id': user_id, 'start_at': start_at},
-        queue_name='timer',
-        eta=eta
-    )
+    def add_timer_end_task(self, start_at, eta):
+        taskqueue.add(
+            url=self.PATH + '/end',
+            target='default',
+            name=self.get_timer_end_task_name(start_at),
+            params={'id': self._id},
+            queue_name='timer',
+            eta=eta
+        )
 
-def delete_timer_end_task(user_id, start_at):
-    q = taskqueue.Queue('timer')
-    q.delete_tasks(taskqueue.Task(
-        name=get_timer_end_task_name(user_id, start_at),
-    ))
+    def add_timer_start_task(self, start_at, eta):
+        taskqueue.add(
+            url=self.PATH + '/start',
+            target='default',
+            name=self.get_timer_start_task_name(start_at),
+            params={'id': self._id, 'start_at': start_at},
+            queue_name='timer',
+            eta=eta
+        )
+
+    def add_timer_stop_task(self, start_at, eta):
+        taskqueue.add(
+            url=self.PATH + '/stop',
+            target='default',
+            name=self.get_timer_stop_task_name(start_at),
+            params={'id': self._id, 'start_at': start_at},
+            queue_name='timer',
+            eta=eta
+        )
+
+    def delete_timer_end_task(self, start_at):
+        q = taskqueue.Queue('timer')
+        q.delete_tasks(taskqueue.Task(
+            name=self.get_timer_end_task_name(start_at),
+        ))
+
+
+class UserTimerTaskqueue(TimerTaskqueue):
+    NAME_PREFIX = 'usertimer'
+    PATH = '/api/task/user/timer'
+
+
+class TeamTimerTaskqueue(TimerTaskqueue):
+    NAME_PREFIX = 'teamtimer'
+    PATH = '/api/task/team/timer'

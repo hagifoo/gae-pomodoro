@@ -3,7 +3,7 @@ This module provides user timer handling
 """
 
 from application.handler import JsonHandler, signin_user_only
-from domain import Timer
+from domain import UserTimer as Timer
 
 
 class Handler(JsonHandler):
@@ -23,7 +23,7 @@ class TimerStartHandler(JsonHandler):
 
 class TimerStartTaskHandler(JsonHandler):
     def post(self):
-        user_id = self.request.get('user_id')
+        user_id = self.request.get('id')
         start_at = int(self.request.get('start_at'), 0)
         if not user_id or not start_at:
             return
@@ -50,7 +50,7 @@ class TimerStopHandler(JsonHandler):
 
 class TimerStopTaskHandler(JsonHandler):
     def post(self):
-        user_id = self.request.get('user_id')
+        user_id = self.request.get('id')
         if not user_id:
             return
 
@@ -60,7 +60,7 @@ class TimerStopTaskHandler(JsonHandler):
 
 class TimerEndTaskHandler(JsonHandler):
     def post(self):
-        user_id = self.request.get('user_id')
+        user_id = self.request.get('id')
         if not user_id:
             return
 

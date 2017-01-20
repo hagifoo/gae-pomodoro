@@ -70,50 +70,105 @@ def get_user_by_google_id(google_id):
     return json.loads(urlfetch.fetch(url).content)
 
 
-def get_timer(user_id):
-    path = '/users/{}/timer.json'.format(user_id)
+class TimerFirebase(object):
+    PATH = '/users'
+    POMODORO_PATH = '/userPomodoros'
+
+    def __init__(self, id_):
+        self._id = id_
+
+    def get(self):
+        path = self.PATH + '/{}/timer.json'.format(self._id)
+        token = get_access_token()[0]
+        url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+        return json.loads(urlfetch.fetch(url).content)
+
+
+    def start(self, start_at):
+        path = self.PATH + '/{}/timer.json'.format(self._id)
+        token = get_access_token()[0]
+        url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+        data = {
+            'startAt': start_at
+        }
+
+        return json.loads(
+            urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
+        .content)
+
+
+    def stop(self):
+        path = self.PATH + '/{}/timer.json'.format(self._id)
+        token = get_access_token()[0]
+        url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+        data = {
+            'startAt': 0
+        }
+
+        return json.loads(
+            urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
+                .content)
+
+
+    def add_pomodoro(self, start_at, time):
+        path =  self.POMODORO_PATH + '/{}/{}.json'.format(self._id, start_at)
+        token = get_access_token()[0]
+        url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+        data = {
+            'time': time
+        }
+
+        return json.loads(
+            urlfetch.fetch(
+                url, payload=json.dumps(data), method='PUT'
+            ).content)
+
+
+class UserTimerFirebase(TimerFirebase):
+    PATH = '/users'
+    POMODORO_PATH = '/userPomodoros'
+
+
+class TeamTimerFirebase(TimerFirebase):
+    PATH = '/teams'
+    POMODORO_PATH = '/teamPomodoros'
+
+    def add_pomodoro(self, start_at, time, team):
+        path =  self.POMODORO_PATH + '/{}/{}.json'.format(self._id, start_at)
+        token = get_access_token()[0]
+        url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+        data = {
+            'time': time,
+            'attendee': team.members
+        }
+
+        urlfetch.fetch(
+            url, payload=json.dumps(data), method='PUT'
+        )
+
+        for user_id in team.member_ids:
+            path =  '/userPomodoros/{}/{}.json'.format(user_id, start_at)
+            token = get_access_token()[0]
+            url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+            data = {
+                'time': time,
+                'team': team.id
+            }
+            urlfetch.fetch(
+                url, payload=json.dumps(data), method='PUT'
+            )
+
+
+
+def fetch_team(id):
+    path = '/teams/{}.json'.format(id)
     token = get_access_token()[0]
-    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
-    return json.loads(urlfetch.fetch(url).content)
-
-
-def start_timer(user_id, start_at):
-    path = '/users/{}/timer.json'.format(user_id)
-    token = get_access_token()[0]
-    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
-    data = {
-        'startAt': start_at
-    }
-
-    return json.loads(
-        urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
-    .content)
-
-
-def stop_timer(user_id):
-    path = '/users/{}/timer.json'.format(user_id)
-    token = get_access_token()[0]
-    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
-    data = {
-        'startAt': 0
-    }
-
-    return json.loads(
-        urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
-            .content)
-
-
-def add_pomodoro(user_id, start_at, time):
-    path = '/pomodoros/{}/{}.json'.format(user_id, start_at)
-    token = get_access_token()[0]
-    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
-    data = {
-        'time': time
-    }
+    url = '{}{}?access_token={}'.format(
+        FIREBASE_URL, path, token)
 
     return json.loads(
         urlfetch.fetch(
-            url, payload=json.dumps(data), method='PUT'
+            url
         ).content)
 
 

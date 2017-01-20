@@ -1,11 +1,13 @@
 const _ = require('underscore');
 const User = require('domain/user');
 const Firebase = require('infra/firebase');
+const API = require('infra/api/team');
 
 module.exports = User.extend({
     defaults: {
         name: ''
     },
+    api: API,
 
     _path: function() {
         return `/teams/${this.id}`;

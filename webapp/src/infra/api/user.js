@@ -1,5 +1,5 @@
 const $ = require('jquery');
-const Loader = require('./loader');
+const Loader = require('infra/loader');
 
 class API {
     ajax(url, method) {

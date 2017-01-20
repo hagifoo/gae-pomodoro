@@ -27,6 +27,11 @@ app = webapp2.WSGIApplication([
                   'application.handler.user.TimerStartHandler'),
     webapp2.Route(r'/api/user/timer/stop',
                   'application.handler.user.TimerStopHandler'),
+    webapp2.Route(r'/api/team/timer/start/<team_id>',
+                  'application.handler.team.TimerStartHandler'),
+    webapp2.Route(r'/api/team/timer/stop/<team_id>',
+                  'application.handler.team.TimerStopHandler'),
+
     # Task
     webapp2.Route(r'/api/task/user/timer/start',
                   'application.handler.user.TimerStartTaskHandler'),
@@ -34,6 +39,13 @@ app = webapp2.WSGIApplication([
                   'application.handler.user.TimerStopTaskHandler'),
     webapp2.Route(r'/api/task/user/timer/end',
                   'application.handler.user.TimerEndTaskHandler'),
+    webapp2.Route(r'/api/task/team/timer/start',
+                  'application.handler.team.TimerStartTaskHandler'),
+    webapp2.Route(r'/api/task/team/timer/stop',
+                  'application.handler.team.TimerStopTaskHandler'),
+    webapp2.Route(r'/api/task/team/timer/end',
+                  'application.handler.team.TimerEndTaskHandler'),
+
     # OAuth
     webapp2.Route(r'/signin/google',
                   'application.handler.auth.SignInHandler'),

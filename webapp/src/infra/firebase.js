@@ -1,7 +1,7 @@
-const API = require('./api');
 const firebase = require('firebase');
 const _ = require('underscore');
-const Loader = require('./loader');
+const API = require('infra/api/user');
+const Loader = require('infra/loader');
 
 class Firebase {
     initialize(config) {
