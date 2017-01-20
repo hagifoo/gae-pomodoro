@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const User = require('domain/user');
 const Firebase = require('infra/firebase');
 
@@ -24,5 +25,9 @@ module.exports = User.extend({
 
     update: function(data) {
         return Firebase.update(this._path(), data);
+    },
+
+    getUserIds: function() {
+        return _.keys(this.get('users'));
     }
 });

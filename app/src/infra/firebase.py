@@ -115,3 +115,33 @@ def add_pomodoro(user_id, start_at, time):
         urlfetch.fetch(
             url, payload=json.dumps(data), method='PUT'
         ).content)
+
+
+def fetch_team_by_invitation_code(invitation_code):
+    path = '/teams.json'
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}&orderBy="invitationLink"&equalTo="{}"'.format(
+        FIREBASE_URL, path, token, invitation_code)
+
+    return json.loads(
+        urlfetch.fetch(
+            url
+        ).content)
+
+
+def add_team_user(team_id, user_id):
+    path = '/teams/{}/users.json'.format(team_id)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+    data = {}
+    data[user_id] = {'join': True}
+
+    urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
+
+    path = '/userTeams/{}.json'.format(user_id)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+    data = {}
+    data[team_id] = True
+
+    urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')

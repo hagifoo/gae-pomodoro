@@ -16,6 +16,9 @@ handlers:
 - url: /auth/.*
   script: src.main.app
 
+- url: /invitation/.*
+  script: src.main.app
+
 - url: /
   static_files: assets/index.html
   upload: assets/index.html

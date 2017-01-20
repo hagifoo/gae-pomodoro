@@ -39,4 +39,8 @@ app = webapp2.WSGIApplication([
                   'application.handler.auth.SignInHandler'),
     webapp2.Route(r'/auth/google',
                   'application.handler.auth.CallbackHandler'),
+
+    # Invitation
+    webapp2.Route(r'/invitation/<invitation_code>',
+                  'application.handler.team.InvitationHandler'),
 ], debug=True, config=config)

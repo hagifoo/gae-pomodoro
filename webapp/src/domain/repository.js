@@ -11,6 +11,10 @@ class Repository {
         this._teams = null;
     }
 
+    _userPath(userId) {
+        return `/users/${userId}`;
+    }
+
     _userTeamPath(userId) {
         return `/userTeams/${userId}`;
     }
@@ -95,6 +99,33 @@ class Repository {
     _j2t(id, data) {
         let j = _.extend(data, {id: id});
         return new Team(j);
+    }
+
+    getMembers(team) {
+        return new Promise((resolve, reject) => {
+            if(team._members) {
+                resolve(team._members);
+            } else {
+                _.each(team.getUserIds(), userId => {
+                    Firebase.listen(this._userPath(userId), userJson => {
+                        let u = this._j2u(userId, userJson);
+                        if(!team._members) {
+                            team._members = new (Backbone.Collection.extend({
+                                model: User
+                            }))(u);
+                        } else {
+                            team._members.add(u, {merge: true});
+                        }
+                        resolve(team._members);
+                    });
+                });
+            }
+        });
+    }
+
+    _j2u(id, data) {
+        let j = _.extend(data, {id: id});
+        return new User(j);
     }
 }
 
