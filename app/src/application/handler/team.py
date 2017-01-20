@@ -2,8 +2,6 @@
 This module provides token handling
 """
 
-import json
-
 from application.handler import BaseHandler, signin_user_only
 import infra.firebase as firebase
 

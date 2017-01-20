@@ -2,17 +2,13 @@
 This module provides token handling
 """
 
-import json
-
-from application.handler import BaseHandler, signin_user_only
+from application.handler import JsonHandler, signin_user_only
 import infra.firebase as firebase
 
 
-class FirebaseHandler(BaseHandler):
+class FirebaseHandler(JsonHandler):
     @signin_user_only
     def get(self):
-        token = {
+        return {
             'token': firebase.create_custom_token(self.user.id, False)
         }
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.out.write(json.dumps(token))

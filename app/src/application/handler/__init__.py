@@ -16,13 +16,24 @@ class BaseHandler(webapp2.RequestHandler):
             self.user = None
 
         try:
-            webapp2.RequestHandler.dispatch(self)
+            return webapp2.RequestHandler.dispatch(self)
         finally:
             self.session_store.save_sessions(self.response)
 
     @webapp2.cached_property
     def session(self):
         return self.session_store.get_session()
+
+
+class JsonHandler(BaseHandler):
+    def dispatch(self):
+        j = super(JsonHandler, self).dispatch()
+        if j is None:
+            j = {}
+
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.out.write(json.dumps(j))
+
 
 # 非ログインユーザは弾く
 def signin_user_only(f):
@@ -32,12 +43,3 @@ def signin_user_only(f):
         else:
             return f(self, *args, **keywords)
     return wrapper
-
-
-class UserHandler(BaseHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        if self.user:
-            self.response.out.write(json.dumps(self.user.to_json()))
-        else:
-            self.response.out.write(json.dumps({'id': None}))

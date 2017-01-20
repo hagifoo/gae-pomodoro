@@ -2,22 +2,26 @@
 This module provides user timer handling
 """
 
-import json
-
-from application.handler import BaseHandler, signin_user_only
+from application.handler import JsonHandler, signin_user_only
 from domain import Timer
 
 
-class TimerStartHandler(BaseHandler):
+class Handler(JsonHandler):
+    def get(self):
+        if self.user:
+            return self.user.to_json()
+        else:
+            return {'id': None}
+
+
+class TimerStartHandler(JsonHandler):
     @signin_user_only
     def get(self):
         timer = Timer.fetch(self.user.id)
-        r = timer.start()
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.out.write(json.dumps(r))
+        return timer.start()
 
 
-class TimerStartTaskHandler(BaseHandler):
+class TimerStartTaskHandler(JsonHandler):
     def post(self):
         user_id = self.request.get('user_id')
         start_at = int(self.request.get('start_at'), 0)
@@ -31,36 +35,30 @@ class TimerStartTaskHandler(BaseHandler):
         if timer.start_at == 0 or timer.start_at != start_at:
             return
 
-        r = {}
         if timer.is_continuous:
-            r = timer.start(start_at=timer.break_end_at)
+            return timer.start(start_at=timer.break_end_at)
+        else:
+            return {}
 
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.out.write(json.dumps(r))
 
-
-class TimerStopHandler(BaseHandler):
+class TimerStopHandler(JsonHandler):
     @signin_user_only
     def get(self):
         timer = Timer.fetch(self.user.id)
-        r = timer.stop()
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.out.write(json.dumps(r))
+        return timer.stop()
 
 
-class TimerStopTaskHandler(BaseHandler):
+class TimerStopTaskHandler(JsonHandler):
     def post(self):
         user_id = self.request.get('user_id')
         if not user_id:
             return
 
         timer = Timer.fetch(user_id)
-        r = timer.stop()
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.out.write(json.dumps(r))
+        return timer.stop()
 
 
-class TimerEndTaskHandler(BaseHandler):
+class TimerEndTaskHandler(JsonHandler):
     def post(self):
         user_id = self.request.get('user_id')
         if not user_id:
@@ -77,5 +75,5 @@ class TimerEndTaskHandler(BaseHandler):
         else:
             timer.stop_after_break()
 
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.out.write(json.dumps(r))
+        return r
+
