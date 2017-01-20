@@ -19,7 +19,8 @@ module.exports = Backbone.Marionette.View.extend({
         this.model.getTodayPomodoros()
             .then(pomodoros => {
                 this.showChildView('pomodoro', new PomodoroListView({
-                    collection: pomodoros
+                    collection: pomodoros,
+                    model: this.model
                 }));
             });
 

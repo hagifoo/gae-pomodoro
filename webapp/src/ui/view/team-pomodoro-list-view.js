@@ -1,10 +1,10 @@
-var Backbone = require('backbone');
+const Backbone = require('backbone');
 require('backbone.marionette');
-var Moment = require('moment');
-var ItemViewTemplate = require('../template/team-pomodoro-item-view-template.hbs');
-var ListViewTemplate = require('../template/team-pomodoro-list-view-template.hbs');
+const Moment = require('moment');
+const ItemViewTemplate = require('../template/team-pomodoro-item-view-template.hbs');
+const ListViewTemplate = require('../template/team-pomodoro-list-view-template.hbs');
 
-var PomodoroItemView = Backbone.Marionette.View.extend({
+const PomodoroItemView = Backbone.Marionette.View.extend({
     template: ItemViewTemplate,
 
     serializeData: function() {
@@ -26,5 +26,10 @@ module.exports = Backbone.Marionette.CompositeView.extend({
     template: ListViewTemplate,
     modelEvents: {
         'change:name': 'render'
+    },
+    serializeData: function() {
+        let j = this.model.toJSON();
+        j.today = Moment().format('MMM D');
+        return j;
     }
 });
