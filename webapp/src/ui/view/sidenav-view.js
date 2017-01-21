@@ -45,7 +45,7 @@ module.exports = Backbone.Marionette.View.extend({
         Repository.addTeam(this.model)
             .then(teamId => {
                 this.closeSidenav();
-                Router.navigate(`teams/${teamId}`);
+                Router.navigate(`teams/${teamId}`, {trigger: true});
             });
     },
 
