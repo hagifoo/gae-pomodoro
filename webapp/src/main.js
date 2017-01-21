@@ -62,15 +62,7 @@ var app = new Backbone.Marionette.Application({
 
 Repository.getUser()
     .then(user => {
-        // signin
-        if(user.id) {
-            return Firebase.initialize(FirebaseConfig);
-        } else {
-            Firebase.signOut(FirebaseConfig)
-                .then(() => {
-                    location.href = '/signin/google';
-                });
-        }
+        return Firebase.initialize(FirebaseConfig, user);
     })
     .then(() => {
         app.start()

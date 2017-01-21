@@ -65,4 +65,9 @@ class CallbackHandler(BaseHandler):
             user.add()
 
         self.session['user'] = user.to_json()
-        self.redirect('/')
+        origin_url = self.session.get('origin_url')
+        if origin_url:
+            self.session['origin_url'] = None
+            self.redirect(str(origin_url))
+        else:
+            self.redirect('/')

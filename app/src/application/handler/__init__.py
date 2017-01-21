@@ -5,6 +5,7 @@ import webapp2
 from webapp2_extras import sessions
 
 from domain import User
+import error
 
 class BaseHandler(webapp2.RequestHandler):
     def dispatch(self):
@@ -17,6 +18,10 @@ class BaseHandler(webapp2.RequestHandler):
 
         try:
             return webapp2.RequestHandler.dispatch(self)
+        except webapp2.HTTPException as e:
+            self.response.set_status(e.code)
+            if e.message:
+                self.response.write(e.message)
         finally:
             self.session_store.save_sessions(self.response)
 
@@ -28,18 +33,17 @@ class BaseHandler(webapp2.RequestHandler):
 class JsonHandler(BaseHandler):
     def dispatch(self):
         j = super(JsonHandler, self).dispatch()
-        if j is None:
-            j = {}
-
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.out.write(json.dumps(j))
+
+        if j is not None:
+            self.response.out.write(json.dumps(j))
 
 
 # 非ログインユーザは弾く
 def signin_user_only(f):
     def wrapper(self, *args, **keywords):
         if not self.user:
-            self.redirect('/signin/google')
+            raise error.UnauthorizedException('Need sign in')
         else:
             return f(self, *args, **keywords)
     return wrapper

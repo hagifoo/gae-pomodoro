@@ -7,11 +7,9 @@ from domain import UserTimer as Timer
 
 
 class Handler(JsonHandler):
+    @signin_user_only
     def get(self):
-        if self.user:
-            return self.user.to_json()
-        else:
-            return {'id': None}
+        return self.user.to_json()
 
 
 class TimerStartHandler(JsonHandler):

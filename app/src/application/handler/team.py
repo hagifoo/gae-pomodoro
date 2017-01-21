@@ -3,18 +3,23 @@ This module provides token handling
 """
 
 from application.handler import BaseHandler, JsonHandler, signin_user_only
-from domain import TeamTimer as Timer, Team
+from domain import Team
 import infra.firebase as firebase
+import error
 
 
 class InvitationHandler(BaseHandler):
-    @signin_user_only
     def get(self, invitation_code):
         team = firebase.fetch_team_by_invitation_code(invitation_code)
         if team is None:
-            return
+            raise error.NotFoundException('Invitation code is invalid.')
 
         team_id = team.keys()[0]
+        if self.user is None:
+            self.session['origin_url'] = self.request.url
+            self.redirect('/signin/google')
+            return
+
         firebase.add_team_user(team_id, self.user.id)
         self.redirect('/#teams/{}'.format(team_id))
 

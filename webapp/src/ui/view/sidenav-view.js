@@ -1,6 +1,7 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
 const Repository = require('domain/repository');
+const Router = require('application/router');
 const TeamItemViewTemplate = require('ui/template/team-item-view-template.hbs');
 const Template = require('ui/template/sidenav-view-template.hbs');
 
@@ -41,7 +42,11 @@ module.exports = Backbone.Marionette.View.extend({
     },
 
     addTeam: function() {
-        Repository.addTeam();
+        Repository.addTeam(this.model)
+            .then(teamId => {
+                this.closeSidenav();
+                Router.navigate(`teams/${teamId}`);
+            });
     },
 
     closeSidenav: function() {

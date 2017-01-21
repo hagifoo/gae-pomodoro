@@ -19,15 +19,19 @@ module.exports = {
         contentBase: path.join(__dirname, 'app', 'assets'),
         port: 8090,
         proxy: {
-            '/api': {
+            '/api/': {
                 target: 'http://localhost:8080/',
                 secure: false
             },
-            '/signin': {
+            '/invitation/': {
                 target: 'http://localhost:8080/',
                 secure: false
             },
-            '/auth': {
+            '/signin/': {
+                target: 'http://localhost:8080/',
+                secure: false
+            },
+            '/auth/': {
                 target: 'http://localhost:8080/',
                 secure: false
             }

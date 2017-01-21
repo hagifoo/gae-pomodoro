@@ -52,10 +52,8 @@ class Repository {
                 }
             };
             let team = Firebase.push(this._teamsPath(), data);
-            Firebase.update(this._userTeamPath(user.id), {[team.key]: true})
-                .then(() => {
-                    resolve(team.key);
-                });
+            Firebase.update(this._userTeamPath(user.id), {[team.key]: true});
+            resolve(team.key);
         });
     }
 

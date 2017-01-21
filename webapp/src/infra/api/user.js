@@ -8,7 +8,12 @@ class API {
             $.ajax({
                 method: method,
                 url: url,
-                dataType: 'json'
+                dataType: 'json',
+                statusCode: {
+                    401: function() {
+                        location.href = '/signin/google';
+                    }
+                }
             }).done(function(data) {
                 resolve(data);
             });

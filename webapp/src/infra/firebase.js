@@ -4,13 +4,26 @@ const API = require('infra/api/user');
 const Loader = require('infra/loader');
 
 class Firebase {
-    initialize(config) {
+    initialize(config, user) {
         Loader.start();
         firebase.initializeApp(config);
 
         return new Promise((resolve, reject) => {
-            firebase.auth().onAuthStateChanged(user => {
-                if (!user) {
+            firebase.auth().onAuthStateChanged(fuser => {
+                if(fuser && fuser.uid != user.id) {
+                    firebase.auth().signOut()
+                        .then(() => {
+                            API.getFirebaseToken()
+                                .then(data => {
+                                    this.signInWithCustomToken(data.token)
+                                        .then(() => {
+                                            Loader.end();
+                                            resolve();
+                                        });
+                                });
+                        });
+                }
+                if (!fuser) {
                     API.getFirebaseToken()
                         .then(data => {
                             this.signInWithCustomToken(data.token)
