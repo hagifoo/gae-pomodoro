@@ -1,10 +1,9 @@
 const Backbone = require('backbone');
 const _ = require('underscore');
-const Moment = require('moment');
 const Firebase = require('infra/firebase');
 const API = require('infra/api/user');
 const Timer = require('domain/timer');
-const Pomodoro = require('domain/pomodoro');
+const UserPomodoro = require('domain/user-pomodoro');
 
 module.exports = Backbone.Model.extend({
     defaults: {
@@ -12,19 +11,10 @@ module.exports = Backbone.Model.extend({
         email: ''
     },
     timerClass: Timer,
-    pomodoroClass: Pomodoro,
     api: API,
 
     _timerPath: function() {
         return `/users/${this.id}/timer`;
-    },
-
-    _pomodorosPath: function() {
-        return `/userPomodoros/${this.id}`;
-    },
-
-    _pomodoroPath: function(id) {
-        return `/userPomodoros/${this.id}/${id}`;
     },
 
     /**
@@ -58,33 +48,22 @@ module.exports = Backbone.Model.extend({
             if(this._pomodoros) {
                 resolve(this._pomodoros);
             } else {
-                Firebase.listenOrderByKey(this._pomodorosPath(), pomodorosJson => {
-                    let ps = _.map(pomodorosJson, this._j2p, this);
+                UserPomodoro.getTodays(this, pomodoros => {
                     if(!this._pomodoros) {
                         this._pomodoros = new (Backbone.Collection.extend({
-                            model: this.pomodoroClass
-                        }))(ps);
+                            model: UserPomodoro
+                        }))(pomodoros);
                     } else {
-                        this._pomodoros.set(ps);
+                        this._pomodoros.set(pomodoros);
                     }
 
                     resolve(this._pomodoros);
-                }, {startAt: '' + Moment(Moment().format('YYYY-MM-DD')).unix()})
+                });
             }
         });
     },
 
-    _j2p(data, id) {
-        let j = {
-            id: id,
-            startAt: id
-        };
-        j = _.extend(j, data);
-        j.owner = this;
-        return new Pomodoro(j);
-    },
-
     updatePomodoro(pomodoroId, data) {
-        Firebase.update(this._pomodoroPath(pomodoroId), data);
+        this._pomodoros.get(pomodoroId).update(data);
     }
 });

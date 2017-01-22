@@ -1,41 +1,44 @@
+/**
+ * Pomodoro の抽象クラス
+ *
+ *
+ */
 const Backbone = require('backbone');
+const _ = require('underscore');
+const Moment = require('moment');
 const Firebase = require('infra/firebase');
 
 module.exports = Backbone.Model.extend({
     defaults: {
+        owner: null,
         startAt: null,
         time: 0
     },
+    _path: function() {
+        return `/pomodoros/${this.get('owner').id}/${this.id}`;
+    },
 
     update: function(data) {
-        this.get('owner').updatePomodoro(this.id, data);
-    },
-
-    updateUserFeeling: function(feel) {
-        const userId = this.get('owner').id;
-        let path = `/userPomodoros/${userId}/${this.id}/`;
-        Firebase.update(path, {feeling: feel});
-
-        const teamId = this.get('team');
-        if(teamId) {
-            let path = `/teamPomodoros/${teamId}/${this.id}/attendee/${userId}`;
-            Firebase.update(path, {feeling: feel});
-        }
-    },
-
-    updateTeamFeeling: function(userId, feel) {
-        let path = `/teamPomodoros/${this.get('owner').id}/${this.id}/attendee/${userId}`;
-        Firebase.update(path, {feeling: feel});
-
-        path = `/userPomodoros/${userId}/${this.id}/`;
-        Firebase.update(path, {feeling: feel});
-    },
-
-    isAttend: function(userId) {
-        return userId in this.get('attendee');
-    },
-
-    getFeeling: function(userId) {
-        return this.get('attendee')[userId].feeling;
+        Firebase.update(this._path(), data);
     }
+}, {
+    getTodays: function(owner, callback) {
+        Firebase.listenOrderByKey(this._path(owner), pomodorosJson => {
+            callback(_.map(pomodorosJson, _.partial(this._j2p, owner), this));
+        }, {startAt: '' + Moment(Moment().format('YYYY-MM-DD')).unix()})
+    },
+
+    _path: function(owner) {
+        return `/pomodoros/${owner.id}`;
+    },
+
+    _j2p: function(owner, data, id) {
+        let j = {
+            id: id,
+            startAt: id
+        };
+        j = _.extend(j, data);
+        j.owner = owner;
+        return new this(j);
+    },
 });

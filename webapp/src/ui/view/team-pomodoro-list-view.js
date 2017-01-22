@@ -1,10 +1,9 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
 const Moment = require('moment');
-const Repository = require('domain/repository');
-const FeelingViewTemplate = require('../template/team-pomodoro-feeling-view-template.hbs');
-const ItemViewTemplate = require('../template/team-pomodoro-item-view-template.hbs');
-const ListViewTemplate = require('../template/team-pomodoro-list-view-template.hbs');
+const FeelingViewTemplate = require('ui/template/team-pomodoro-feeling-view-template.hbs');
+const ItemViewTemplate = require('ui/template/team-pomodoro-item-view-template.hbs');
+const ListViewTemplate = require('ui/template/team-pomodoro-list-view-template.hbs');
 
 const FeelingView = Backbone.Marionette.View.extend({
     template: FeelingViewTemplate,
@@ -83,7 +82,7 @@ const PomodoroItemView = Backbone.Marionette.View.extend({
     },
 
     onRender: function() {
-         Repository.getMembers(this.getOption('team'))
+         this.getOption('team').getMembers()
              .then(members => {
                  this.showChildView('feelings', new FeelingListView({
                      collection: members,

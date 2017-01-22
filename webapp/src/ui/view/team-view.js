@@ -1,6 +1,5 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
-const Repository = require('domain/repository');
 const PomodoroListView = require('ui/view/team-pomodoro-list-view');
 const TimerView = require('ui/view/timer-view');
 const TimerControlView = require('ui/view/timer-control-view');
@@ -42,7 +41,7 @@ module.exports = Backbone.Marionette.View.extend({
                 this.showChildView('teamSetting', new TeamSettingView({model: this.model}));
             });
 
-        Repository.getMembers(this.model)
+        this.model.getMembers()
             .then(members => {
                 this.showChildView('teamMembers', new TeamMembersView({
                     collection: members,

@@ -1,11 +1,10 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
-const Repository = require('../../domain/repository');
-const PomodoroListView = require('./pomodoro-list-view');
-const TimerView = require('./timer-view');
-const TimerControlView = require('./timer-control-view');
-const TimerSettingView = require('./timer-setting-view');
-const Template = require('../template/user-view-template.hbs');
+const PomodoroListView = require('ui/view/pomodoro-list-view');
+const TimerView = require('ui/view/timer-view');
+const TimerControlView = require('ui/view/timer-control-view');
+const TimerSettingView = require('ui/view/timer-setting-view');
+const Template = require('ui/template/user-view-template.hbs');
 
 module.exports = Backbone.Marionette.View.extend({
     template: Template,

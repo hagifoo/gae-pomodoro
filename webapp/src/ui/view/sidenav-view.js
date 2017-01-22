@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
-const Repository = require('domain/repository');
+const Repository = require('domain/team-repository');
 const Router = require('application/router');
 const TeamItemViewTemplate = require('ui/template/team-item-view-template.hbs');
 const Template = require('ui/template/sidenav-view-template.hbs');
@@ -31,7 +31,7 @@ module.exports = Backbone.Marionette.View.extend({
     },
 
     onRender: function() {
-        Repository.getUserTeams(this.model)
+        Repository.getTeamsByUserId(this.model.id)
             .then(teams => {
                 this.showChildView('teams', new TeamListView({collection: teams}));
             });

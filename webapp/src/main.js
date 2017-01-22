@@ -1,34 +1,35 @@
-var FirebaseConfig = require('./config/firebase');
-var Firebase = require('./infra/firebase');
-var Backbone = require('backbone');
+const FirebaseConfig = require('config/firebase');
+const Firebase = require('infra/firebase');
+const Backbone = require('backbone');
 require('backbone.marionette');
-var Router = require('./application/router');
-var Repository = require('./domain/repository');
-var Loader = require('./infra/loader');
-var SidenavView = require('./ui/view/sidenav-view');
-var LoaderView = require('./ui/view/loader-view');
-var UserView = require('./ui/view/user-view');
-var TeamView = require('./ui/view/team-view');
+const Router = require('application/router');
+const UserRepository = require('domain/user-repository');
+const TeamRepository = require('domain/team-repository');
+const Loader = require('infra/loader');
+const SidenavView = require('ui/view/sidenav-view');
+const LoaderView = require('ui/view/loader-view');
+const UserView = require('ui/view/user-view');
+const TeamView = require('ui/view/team-view');
 
 
 Loader.start();
 const loader = new LoaderView({el: '#loader', model: Loader});
 loader.render();
 
-var app = new Backbone.Marionette.Application({
+const app = new Backbone.Marionette.Application({
     region: 'body',
     onStart: function() {
-        var RootView = Backbone.Marionette.View.extend({
+        const RootView = Backbone.Marionette.View.extend({
             el: '#root',
             regions: {
                 app: '#app',
                 sidenav: '#sidenav',
             }
         });
-        var rootView = new RootView();
+        const rootView = new RootView();
         this.showView(rootView);
 
-        Repository.getUser()
+        UserRepository.getLoginUser()
             .then(user => {
                 rootView.showChildView('sidenav', new SidenavView({
                     model: user
@@ -36,16 +37,16 @@ var app = new Backbone.Marionette.Application({
             });
 
         Router.on('user', () => {
-            Repository.getUser()
+            UserRepository.getLoginUser()
                 .then(user => {
                     rootView.showChildView('app', new UserView({model: user}));
                 });
         });
 
         Router.on('team', (teamId) => {
-            Repository.getUser()
+            UserRepository.getLoginUser()
                 .then(user => {
-                    Repository.getTeam(teamId)
+                    TeamRepository.getTeam(teamId)
                         .then(team => {
                             rootView.showChildView('app',
                                 new TeamView({
@@ -60,7 +61,7 @@ var app = new Backbone.Marionette.Application({
     }
 });
 
-Repository.getUser()
+UserRepository.getLoginUser()
     .then(user => {
         return Firebase.initialize(FirebaseConfig, user);
     })

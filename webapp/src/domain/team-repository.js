@@ -1,18 +1,11 @@
 const Backbone = require('backbone');
 const _ = require('underscore');
 const Firebase = require('infra/firebase');
-const API = require('infra/api/user');
-const User = require('domain/user');
 const Team = require('domain/team');
 
 class Repository {
     constructor() {
-        this._user = null;
         this._teams = null;
-    }
-
-    _userPath(userId) {
-        return `/users/${userId}`;
     }
 
     _userTeamPath(userId) {
@@ -25,20 +18,6 @@ class Repository {
 
     _teamsPath() {
         return `/teams`;
-    }
-
-    getUser() {
-        return new Promise((resolve, reject) => {
-            if(this._user) {
-                resolve(this._user);
-            } else {
-                API.getUser()
-                    .then(user => {
-                        this._user = new User(user);
-                        resolve(this._user);
-                    });
-            }
-        });
     }
 
     addTeam(user) {
@@ -57,12 +36,12 @@ class Repository {
         });
     }
 
-    getUserTeams(user) {
+    getTeamsByUserId(userId) {
         return new Promise((resolve, reject) => {
             if(this._teams) {
                 resolve(this._teams);
             } else {
-                Firebase.listen(this._userTeamPath(user.id), teamJson => {
+                Firebase.listen(this._userTeamPath(userId), teamJson => {
                     _.each(teamJson, (v, id) => {
                         this.getTeam(id)
                             .then(team => {
@@ -97,33 +76,6 @@ class Repository {
     _j2t(id, data) {
         let j = _.extend(data, {id: id});
         return new Team(j);
-    }
-
-    getMembers(team) {
-        return new Promise((resolve, reject) => {
-            if(team._members) {
-                resolve(team._members);
-            } else {
-                _.each(team.getUserIds(), userId => {
-                    Firebase.listen(this._userPath(userId), userJson => {
-                        let u = this._j2u(userId, userJson);
-                        if(!team._members) {
-                            team._members = new (Backbone.Collection.extend({
-                                model: User
-                            }))(u);
-                        } else {
-                            team._members.add(u, {merge: true});
-                        }
-                        resolve(team._members);
-                    });
-                });
-            }
-        });
-    }
-
-    _j2u(id, data) {
-        let j = _.extend(data, {id: id});
-        return new User(j);
     }
 }
 
