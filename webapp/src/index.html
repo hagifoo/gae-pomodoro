@@ -46,17 +46,31 @@
         .collapsible-header i {
             font-size: 1.2rem;
         }
+        #nav {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        #title .brand-logo {
+            position: relative;
+        }
+        #members {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+        }
     </style>
 </head>
 <body>
     <div id='root'>
         <nav>
             <div class="nav-wrapper blue darken-3">
-                <a href="#" class="brand-logo right">Team Pomodoro</a>
-                <ul id="nav" class="left">
+                <span id="title" class="center-align"></span>
+                <ul id="nav">
                     <li id="sidenav"></li>
                     <li id="loader" style="line-height: 40px; padding-top: 12px;"></li>
                 </ul>
+                <ul id="members"></ul>
             </div>
         </nav>
         <div id="app" class="row">

@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const Backbone = require('backbone');
 require('backbone.marionette');
 const Moment = require('moment');
@@ -95,6 +96,9 @@ const PomodoroItemView = Backbone.Marionette.View.extend({
 
 module.exports = Backbone.Marionette.CompositeView.extend({
     childView: PomodoroItemView,
+    emptyView: Backbone.Marionette.View.extend({
+        template: _.template('<span class="grey-text">No pomodoros today.</span>')
+    }),
     childViewContainer: '.pomodoro-list',
     template: ListViewTemplate,
     modelEvents: {

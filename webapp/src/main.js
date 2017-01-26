@@ -10,6 +10,8 @@ const Loader = require('infra/loader');
 const SidenavView = require('ui/view/sidenav-view');
 const LoaderView = require('ui/view/loader-view');
 const UserView = require('ui/view/user-view');
+const TitleView = require('ui/view/title');
+const TeamMembersView = require('ui/view/team-members-view');
 const TeamView = require('ui/view/team-view');
 
 
@@ -24,7 +26,9 @@ const app = new Backbone.Marionette.Application({
             el: '#root',
             regions: {
                 app: '#app',
+                title: '#title',
                 sidenav: '#sidenav',
+                members: '#members'
             }
         });
         const rootView = new RootView();
@@ -41,6 +45,8 @@ const app = new Backbone.Marionette.Application({
             UserRepository.getLoginUser()
                 .then(user => {
                     rootView.showChildView('app', new UserView({model: user}));
+                    rootView.showChildView('title', new TitleView({model: user}));
+                    rootView.getRegion('members').empty();
                 });
         });
 
@@ -54,6 +60,15 @@ const app = new Backbone.Marionette.Application({
                                     model: team,
                                     user: user
                                 }));
+
+                            rootView.showChildView('title', new TitleView({model: team}));
+
+                            team.getMembers()
+                                .then(members => {
+                                    rootView.showChildView('members', new TeamMembersView({
+                                        collection: members,
+                                        model: team}));
+                                });
                         });
                 });
         });

@@ -24,7 +24,8 @@ module.exports = Backbone.Marionette.View.extend({
     },
     events: {
         'click @ui.addTeamButton': 'addTeam',
-        'click .teams': 'closeSidenav'
+        'click .teams': 'closeSidenav',
+        'click .userView': 'closeSidenav'
     },
     regions: {
         teams: '.teams'
