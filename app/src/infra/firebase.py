@@ -202,3 +202,37 @@ def add_team_user(team_id, user_id):
     data[team_id] = True
 
     urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
+
+
+def update_team_slack(team_id, name, domain):
+    path = '/teams/{}/slack.json'.format(team_id)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+    data = {
+        'name': name,
+        'domain': domain
+    }
+
+    urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
+
+
+def update_team_slack_token(team_id, slack_token):
+    path = '/teamSecrets/{}/slack.json'.format(team_id)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+    data = {
+        'token': slack_token
+    }
+
+    urlfetch.fetch(url, payload=json.dumps(data), method='PATCH')
+
+
+def get_team_slack_token(team_id):
+    path = '/teamSecrets/{}/slack.json'.format(team_id)
+    token = get_access_token()[0]
+    url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
+
+    return json.loads(
+        urlfetch.fetch(
+            url
+        ).content)['token']

@@ -24,6 +24,13 @@ class InvitationHandler(BaseHandler):
         self.redirect('/#teams/{}'.format(team_id))
 
 
+class SlackChannelsHandler(JsonHandler):
+    @signin_user_only
+    def get(self, team_id):
+        team = Team.fetch(team_id)
+        return team.get_slack_channels()
+
+
 class TimerStartHandler(JsonHandler):
     @signin_user_only
     def get(self, team_id):
@@ -31,6 +38,8 @@ class TimerStartHandler(JsonHandler):
         # if not timer.is_member(self.user.id):
         #     raise RuntimeError()
 
+        if team.slack.is_notify():
+            team.slack.notify_start()
         return team.timer.start()
 
 
@@ -53,6 +62,9 @@ class TimerStartTaskHandler(JsonHandler):
             return
 
         if timer.is_continuous:
+            if team.slack.is_notify():
+                team.slack.notify_start()
+
             return timer.start(start_at=timer.break_end_at)
         else:
             return {}
@@ -65,6 +77,8 @@ class TimerStopHandler(JsonHandler):
         # if not timer.is_member(self.user.id):
         #     raise RuntimeError()
 
+        if team.slack.is_notify():
+            team.slack.notify_stop()
         return team.timer.stop()
 
 
@@ -98,5 +112,8 @@ class TimerEndTaskHandler(JsonHandler):
             timer.restart_after_break()
         else:
             timer.stop_after_break()
+
+        if team.slack.is_notify():
+            team.slack.notify_end()
 
         return r

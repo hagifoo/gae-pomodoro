@@ -19,11 +19,7 @@ module.exports = Backbone.Marionette.View.extend({
             observe: 'invitationLink',
             onGet: function(value) {
                 let prot = window.location.protocol;
-                let host = window.location.hostname;
-                let port = window.location.port;
-                if(port != 80) {
-                    host = host + ':' + port;
-                }
+                let host = window.location.host;
                 return  `${prot}//${host}/invitation/${value}`
             }
         }

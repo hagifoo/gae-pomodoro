@@ -4,7 +4,7 @@ module.exports = {
     context: path.join(__dirname, 'webapp', 'src'),
     entry: {
         main: './main.js' ,
-        html: './index.html'
+//        html: './index.html'
     },
     output: {
         path: path.join(__dirname, 'app', 'assets'),
@@ -46,10 +46,6 @@ module.exports = {
                 query:{
                     presets: ['es2015']
                 }
-            },
-            {
-                test: /\.html$/,
-                loader: 'file?name=[path][name].[ext]'
             },
             {
                 test: /\.hbs$/,

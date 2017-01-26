@@ -1,3 +1,4 @@
+require('file?name=[name].[ext]!index.html');
 const FirebaseConfig = require('config/firebase');
 const Firebase = require('infra/firebase');
 const Backbone = require('backbone');

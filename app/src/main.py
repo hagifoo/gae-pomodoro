@@ -31,6 +31,8 @@ app = webapp2.WSGIApplication([
                   'application.handler.team.TimerStartHandler'),
     webapp2.Route(r'/api/team/timer/stop/<team_id>',
                   'application.handler.team.TimerStopHandler'),
+    webapp2.Route(r'/api/teams/<team_id>/slack/channels',
+                  'application.handler.team.SlackChannelsHandler'),
 
     # Task
     webapp2.Route(r'/api/task/user/timer/start',
@@ -48,9 +50,13 @@ app = webapp2.WSGIApplication([
 
     # OAuth
     webapp2.Route(r'/signin/google',
-                  'application.handler.auth.SignInHandler'),
+                  'application.handler.auth.google.SignInHandler'),
     webapp2.Route(r'/auth/google',
-                  'application.handler.auth.CallbackHandler'),
+                  'application.handler.auth.google.CallbackHandler'),
+    webapp2.Route(r'/auth/teams/<team_id>/integrate/slack',
+                  'application.handler.auth.slack.SignInHandler'),
+    webapp2.Route(r'/auth/slack',
+                  'application.handler.auth.slack.CallbackHandler'),
 
     # Invitation
     webapp2.Route(r'/invitation/<invitation_code>',

@@ -5,6 +5,7 @@ const TimerView = require('ui/view/timer-view');
 const TimerControlView = require('ui/view/timer-control-view');
 const TimerSettingView = require('ui/view/timer-setting-view');
 const TeamSettingView = require('ui/view/team-setting-view');
+const SlackSettingView = require('ui/view/slack-setting-view');
 const TeamMembersView = require('ui/view/team-members-view');
 const Template = require('ui/template/team-view-template.hbs');
 
@@ -16,9 +17,12 @@ module.exports = Backbone.Marionette.View.extend({
         timerControl: '#timer .control',
         timerSetting: '#timer-setting',
         teamSetting: '#team-setting',
+        slackSetting: '#slack-setting',
         teamMembers: '#team-members'
     },
     onRender: function() {
+        this.showChildView('teamSetting', new TeamSettingView({model: this.model}));
+
         this.model.getTodayPomodoros()
             .then(pomodoros => {
                 this.showChildView('pomodoro', new PomodoroListView({
@@ -38,7 +42,11 @@ module.exports = Backbone.Marionette.View.extend({
                 }));
                 this.showChildView('timerControl', new TimerControlView({model: timer}));
                 this.showChildView('timerSetting', new TimerSettingView({model: timer}));
-                this.showChildView('teamSetting', new TeamSettingView({model: this.model}));
+            });
+
+        this.model.getSlack()
+            .then(slack => {
+                this.showChildView('slackSetting', new SlackSettingView({model: slack}));
             });
 
         this.model.getMembers()
@@ -47,5 +55,10 @@ module.exports = Backbone.Marionette.View.extend({
                     collection: members,
                     model: this.model}));
             })
+    },
+
+    onDomRefresh: function() {
+        $('.collapsible').collapsible();
     }
+
 });

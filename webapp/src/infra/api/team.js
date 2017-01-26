@@ -30,6 +30,12 @@ class API {
     stopTimer(id) {
         return this.ajax(`/api/team/timer/stop/${id}`, 'GET');
     }
+    integrateSlack(id) {
+        location.href = `/auth/teams/${id}/integrate/slack`;
+    }
+    getSlackChannels(id) {
+        return this.ajax(`/api/teams/${id}/slack/channels`, 'GET');
+    }
 }
 
 module.exports = new API();

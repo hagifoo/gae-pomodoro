@@ -2,6 +2,7 @@ from datetime import datetime
 import time
 
 from infra import firebase
+from infra import slack
 from infra import taskqueue
 
 
@@ -66,6 +67,10 @@ class Timer(object):
         return self._pomodoro_time
 
     @property
+    def break_time(self):
+        return self._break_time
+
+    @property
     def is_continuous(self):
         return self._is_continuous
 
@@ -76,12 +81,14 @@ class Timer(object):
 
     @classmethod
     def from_json(cls, id, j):
+        if not j:
+            j = {}
         return cls(
             id,
             start_at=int(j.get('startAt', 0)),
-            pomodoro_time=int(j.get('pomodoroTime')),
-            break_time=int(j.get('breakTime')),
-            is_continuous=j.get('isContinuous'),
+            pomodoro_time=int(j.get('pomodoroTime', 25)),
+            break_time=int(j.get('breakTime', 5)),
+            is_continuous=bool(j.get('isContinuous', False)),
         )
 
 
@@ -101,20 +108,86 @@ class TeamTimer(Timer):
             team
         )
 
+class Slack(object):
+    def __init__(self, owner, name=None, domain=None,
+                 channel_id=None):
+        self._owner = owner
+        self._name = name
+        self._domain = domain
+        self._channel_id = channel_id
+        self._token = None
+
+    @property
+    def owner(self):
+        return self._owner
+
+    @property
+    def channel_id(self):
+        return self._channel_id
+
+    def update(self, token, name, domain):
+        firebase.update_team_slack(self.owner.id, name, domain)
+        firebase.update_team_slack_token(self.id, token)
+
+    @property
+    def token(self):
+        if not self._token:
+            self._token = firebase.get_team_slack_token(self.owner.id)
+        return self._token
+
+    def is_notify(self):
+        return self._channel_id is not None
+
+    def get_channels(self):
+        channels = slack.API(self.token).get_channels_list()
+        return [{'name': c['name'], 'id': c['id']} for c in channels['channels']]
+
+    def notify_start(self):
+        text = '''{}'s pomodoro started! {} min.'''.format(self.owner.name, self.owner.timer.pomodoro_time / 60)
+        slack.API(self.token).post_message(self.channel_id, text)
+
+    def notify_stop(self):
+        text = '''{}'s pomodoro stopped!'''.format(self.owner.name)
+        slack.API(self.token).post_message(self.channel_id, text)
+
+    def notify_end(self):
+        text = '''{}'s pomodoro completed! {} min break.'''.format(self.owner.name, self.owner.timer.break_time / 60)
+        slack.API(self.token).post_message(self.channel_id, text)
+
+    @classmethod
+    def from_json(cls, owner, j):
+        if not j:
+            j = {}
+        return cls(
+            owner,
+            name=j.get('name'),
+            domain=j.get('domain'),
+            channel_id=j.get('channelId')
+        )
+
 class Team(object):
-    def __init__(self, id, name, members, timer):
+    def __init__(self, id, name, members, timer, slack):
         self._id = id
         self._name = name
         self._members = members
         self._timer = TeamTimer.from_json(id, timer)
+        self._slack = Slack.from_json(self, slack)
 
     @property
     def id(self):
         return self._id
 
     @property
+    def name(self):
+        return self._name
+
+    @property
     def timer(self):
         return self._timer
+
+    @property
+    def slack(self):
+        return self._slack
 
     @property
     def members(self):
@@ -135,7 +208,8 @@ class Team(object):
                 id=id,
                 name=j.get('name'),
                 members=j.get('users', {}),
-                timer=j.get('timer')
+                timer=j.get('timer'),
+                slack=j.get('slack'),
             )
 
 
