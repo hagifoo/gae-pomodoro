@@ -28,7 +28,7 @@ class SlackChannelsHandler(JsonHandler):
     @signin_user_only
     def get(self, team_id):
         team = Team.fetch(team_id)
-        return team.get_slack_channels()
+        return team.slack.get_channels()
 
 
 class TimerStartHandler(JsonHandler):

@@ -127,7 +127,7 @@ class Slack(object):
 
     def update(self, token, name, domain):
         firebase.update_team_slack(self.owner.id, name, domain)
-        firebase.update_team_slack_token(self.id, token)
+        firebase.update_team_slack_token(self.owner.id, token)
 
     @property
     def token(self):
