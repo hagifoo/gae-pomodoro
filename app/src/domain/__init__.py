@@ -110,12 +110,13 @@ class TeamTimer(Timer):
 
 class Slack(object):
     def __init__(self, owner, name=None, domain=None,
-                 channel_id=None):
+                 channel_id=None, mention=''):
         self._owner = owner
         self._name = name
         self._domain = domain
         self._channel_id = channel_id
         self._token = None
+        self._mention = mention
 
     @property
     def owner(self):
@@ -143,15 +144,18 @@ class Slack(object):
         return [{'name': c['name'], 'id': c['id']} for c in channels['channels']]
 
     def notify_start(self):
-        text = '''{}'s pomodoro started! {} min.'''.format(self.owner.name, self.owner.timer.pomodoro_time / 60)
+        text = '''{}'s pomodoro started! {} min. {}'''.format(
+            self.owner.name, self.owner.timer.pomodoro_time / 60, self._mention)
         slack.API(self.token).post_message(self.channel_id, text)
 
     def notify_stop(self):
-        text = '''{}'s pomodoro stopped!'''.format(self.owner.name)
+        text = '''{}'s pomodoro stopped!'''.format(
+            self.owner.name)
         slack.API(self.token).post_message(self.channel_id, text)
 
     def notify_end(self):
-        text = '''{}'s pomodoro completed! {} min break.'''.format(self.owner.name, self.owner.timer.break_time / 60)
+        text = '''{}'s pomodoro completed! {} min break. {}'''.format(
+            self.owner.name, self.owner.timer.break_time / 60, self._mention)
         slack.API(self.token).post_message(self.channel_id, text)
 
     @classmethod
@@ -162,7 +166,8 @@ class Slack(object):
             owner,
             name=j.get('name'),
             domain=j.get('domain'),
-            channel_id=j.get('channelId')
+            channel_id=j.get('channelId'),
+            mention=j.get('mention')
         )
 
 class Team(object):

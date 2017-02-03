@@ -59,6 +59,19 @@ module.exports = Backbone.Marionette.View.extend({
                     return value ? '' : 'disabled';
                 }
             }]
+        },
+        '#slack-mention': {
+            observe: 'mention',
+            set: function(attr, value) {
+                return this.model.update({mention: value});
+            },
+            attributes: [{
+                name: 'class',
+                observe: 'name',
+                onGet: function(value) {
+                    return value ? '' : 'disabled';
+                }
+            }]
         }
     },
 
