@@ -5,21 +5,27 @@ const TimerView = require('ui/view/timer-view');
 const TimerControlView = require('ui/view/timer-control-view');
 const TimerSettingView = require('ui/view/timer-setting-view');
 const TeamSettingView = require('ui/view/team-setting-view');
+const TaskSettingView = require('ui/view/task-setting-view');
 const SlackSettingView = require('ui/view/slack-setting-view');
+const PomodoroSettingView = require('ui/view/pomodoro-setting-view');
 const Template = require('ui/template/team-view-template.hbs');
 
 module.exports = Backbone.Marionette.View.extend({
     template: Template,
     regions: {
         pomodoro: '#pomodoros',
+        pomodoroSetting: '#timer .setting',
         timerCircle: '#timer .circle',
         timerControl: '#timer .control',
         timerSetting: '#timer-setting',
         teamSetting: '#team-setting',
-        slackSetting: '#slack-setting'
+        slackSetting: '#slack-setting',
+        taskSetting: '#task-setting'
     },
     onRender: function() {
         this.showChildView('teamSetting', new TeamSettingView({model: this.model}));
+        this.showChildView('taskSetting', new TaskSettingView({model: this.model}));
+        this.showChildView('pomodoroSetting', new PomodoroSettingView({model: this.model}));
 
         this.model.getTodayPomodoros()
             .then(pomodoros => {

@@ -140,7 +140,8 @@ class TeamTimerFirebase(TimerFirebase):
         url = '{}{}?access_token={}'.format(FIREBASE_URL, path, token)
         data = {
             'time': time,
-            'attendee': {id: {'feeling': 'none'} for id in team.member_ids}
+            'attendee': {id: {'feeling': 'none'} for id in team.member_ids},
+            'scope': team.scope
         }
 
         urlfetch.fetch(
@@ -154,7 +155,8 @@ class TeamTimerFirebase(TimerFirebase):
             data = {
                 'time': time,
                 'team': team.id,
-                'feeling': 'none'
+                'feeling': 'none',
+                'scope': team.scope
             }
             urlfetch.fetch(
                 url, payload=json.dumps(data), method='PUT'

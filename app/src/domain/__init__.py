@@ -11,7 +11,7 @@ class Timer(object):
     FIREBASE = firebase.TimerFirebase
 
     def __init__(self, id, start_at, pomodoro_time,
-                 break_time, is_continuous):
+                 break_time, is_continuous, owner=None):
         self._id = id
         self._start_at = start_at
         self._pomodoro_time = pomodoro_time
@@ -144,17 +144,19 @@ class Slack(object):
         return [{'name': c['name'], 'id': c['id']} for c in channels['channels']]
 
     def notify_start(self):
-        text = '''{}'s pomodoro started! {} min. {}'''.format(
-            self.owner.name, self.owner.timer.pomodoro_time / 60, self._mention)
+        text = u'''{}'s pomodoro started! {} min. {}'''.format(
+            self.owner.name,
+            self.owner.timer.pomodoro_time / 60,
+            self._mention)
         slack.API(self.token).post_message(self.channel_id, text)
 
     def notify_stop(self):
-        text = '''{}'s pomodoro stopped!'''.format(
+        text = u'''{}'s pomodoro stopped!'''.format(
             self.owner.name)
         slack.API(self.token).post_message(self.channel_id, text)
 
     def notify_end(self):
-        text = '''{}'s pomodoro completed! {} min break. {}'''.format(
+        text = u'''{}'s pomodoro completed! {} min break. {}'''.format(
             self.owner.name, self.owner.timer.break_time / 60, self._mention)
         slack.API(self.token).post_message(self.channel_id, text)
 
@@ -171,12 +173,13 @@ class Slack(object):
         )
 
 class Team(object):
-    def __init__(self, id, name, members, timer, slack):
+    def __init__(self, id, name, members, timer, slack, scope=''):
         self._id = id
         self._name = name
         self._members = members
         self._timer = TeamTimer.from_json(id, timer)
         self._slack = Slack.from_json(self, slack)
+        self._scope = scope
 
     @property
     def id(self):
@@ -193,6 +196,10 @@ class Team(object):
     @property
     def slack(self):
         return self._slack
+
+    @property
+    def scope(self):
+        return self._scope
 
     @property
     def members(self):
@@ -215,6 +222,7 @@ class Team(object):
                 members=j.get('users', {}),
                 timer=j.get('timer'),
                 slack=j.get('slack'),
+                scope=j.get('scope')
             )
 
 
@@ -229,6 +237,10 @@ class User(object):
     @property
     def id(self):
         return self._id
+
+    @property
+    def scope(self):
+        return ''
 
     def add(self):
         if self.id is not None:
