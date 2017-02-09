@@ -7,7 +7,7 @@ Sample GAE application to learn Firebase and webpack.
 ## Overview
 Team pomodoro timer.
 
-## Setup and development
+## Setup
 
 You shuold install node, npm, gae sdk for python beforehand.
 
@@ -25,6 +25,11 @@ $ npm run start
 # access localhost:8080/
 ```
 
+## Testing
+
+```
+$ pip install mamba mock
+```
 
 ## Directory Structure
 ```
