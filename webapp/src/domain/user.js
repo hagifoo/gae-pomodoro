@@ -26,6 +26,10 @@ module.exports = Backbone.Model.extend({
         return `/users/${this.id}/slack`;
     },
 
+    update: function(data) {
+        return Firebase.update(this._path(), data);
+    },
+
     /**
      * @return {Promise} - resolve Timer object
      */
@@ -49,7 +53,7 @@ module.exports = Backbone.Model.extend({
     },
 
     /**
-     * @return {Promise} - resolve Timer object
+     * @return {Promise} - resolve Slack object
      */
     getSlack: function() {
         return new Promise((resolve, reject) => {

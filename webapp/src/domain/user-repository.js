@@ -7,6 +7,7 @@ const User = require('domain/user');
 class Repository {
     constructor() {
         this._loginUser = null;
+        this._user = null;
         this._users = null;
     }
 
@@ -14,18 +15,33 @@ class Repository {
         return `/users/${userId}`;
     }
 
-    getLoginUser() {
+    checkLogin() {
         return new Promise((resolve, reject) => {
+            API.getUser()
+                .then(user => {
+                    this._user = user;
+                    resolve(user);
+                });
+        });
+    }
+
+    getLoginUser() {
+        if(this._loginP) {
+            return this._loginP;
+        }
+        this._loginP = new Promise((resolve, reject) => {
             if(this._loginUser) {
                 resolve(this._loginUser);
             } else {
-                API.getUser()
+                this.getUserById(this._user.id)
                     .then(user => {
-                        this._loginUser = new User(user);
+                        this._loginUser = user;
                         resolve(this._loginUser);
-                    });
+                    })
             }
         });
+
+        return this._loginP;
     }
 
     getUserById(userId) {

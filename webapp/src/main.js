@@ -77,7 +77,7 @@ const app = new Backbone.Marionette.Application({
     }
 });
 
-UserRepository.getLoginUser()
+UserRepository.checkLogin()
     .then(user => {
         return Firebase.initialize(FirebaseConfig, user);
     })
