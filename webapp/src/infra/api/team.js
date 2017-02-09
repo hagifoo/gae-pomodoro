@@ -31,7 +31,7 @@ class API {
         return this.ajax(`/api/team/timer/stop/${id}`, 'GET');
     }
     integrateSlack(id) {
-        location.href = `/auth/teams/${id}/integrate/slack`;
+        location.href = `/integrate/slack/teams/${id}`;
     }
     getSlackChannels(id) {
         return this.ajax(`/api/teams/${id}/slack/channels`, 'GET');

@@ -13,6 +13,9 @@ handlers:
 - url: /signin/.*
   script: src.main.app
 
+- url: /integrate/.*
+  script: src.main.app
+
 - url: /auth/.*
   script: src.main.app
 

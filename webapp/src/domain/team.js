@@ -19,7 +19,6 @@ module.exports = Backbone.Model.extend({
         return `/teams/${this.id}`;
     },
 
-
     _memberPath: function() {
         return `/teams/${this.id}/users`;
     },

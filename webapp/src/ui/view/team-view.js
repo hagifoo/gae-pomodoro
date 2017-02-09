@@ -57,5 +57,4 @@ module.exports = Backbone.Marionette.View.extend({
     onDomRefresh: function() {
         $('.collapsible').collapsible();
     }
-
 });

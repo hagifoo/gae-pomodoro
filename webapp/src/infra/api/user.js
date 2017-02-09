@@ -36,6 +36,12 @@ class API {
     getFirebaseToken() {
         return this.ajax('/api/token/firebase', 'GET');
     }
+    integrateSlack() {
+        location.href = `/integrate/slack/user`;
+    }
+    getSlackChannels() {
+        return this.ajax(`/api/user/slack/channels`, 'GET');
+    }
 }
 
 module.exports = new API();
