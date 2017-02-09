@@ -16,23 +16,33 @@ class TimerTaskqueue(object):
         return '{}end_{}_{}'.format(
             self.NAME_PREFIX, self._id, start_at)
 
+    def add(self, url, name, params, eta):
+        try:
+            taskqueue.add(
+                url=url,
+                target='default',
+                name=name,
+                params=params,
+                queue_name='timer',
+                eta=eta
+            )
+        except taskqueue.TaskAlreadyExistsError:
+            import logging
+            logging.warning('task already exists: {}'.format(name))
+
     def add_timer_end_task(self, start_at, eta):
-        taskqueue.add(
+        self.add(
             url=self.PATH + '/end',
-            target='default',
             name=self.get_timer_end_task_name(start_at),
             params={'id': self._id},
-            queue_name='timer',
             eta=eta
         )
 
     def add_timer_stop_task(self, start_at, eta):
-        taskqueue.add(
+        self.add(
             url=self.PATH + '/stop',
-            target='default',
             name=self.get_timer_stop_task_name(start_at),
             params={'id': self._id, 'start_at': start_at},
-            queue_name='timer',
             eta=eta
         )
 
