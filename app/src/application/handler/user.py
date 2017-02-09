@@ -1,9 +1,10 @@
 """
-This module provides user timer handling
+This module provides user and user timer handling
 """
 
-from application.handler import JsonHandler, signin_user_only
-from domain import UserTimer as Timer
+from application.handler import JsonHandler, TaskHandler, signin_user_only
+from domain.repository import UserRepository
+import error
 
 
 class Handler(JsonHandler):
@@ -12,66 +13,68 @@ class Handler(JsonHandler):
         return self.user.to_json()
 
 
+class SlackChannelsHandler(JsonHandler):
+    @signin_user_only
+    def get(self):
+        repository = UserRepository()
+        user = repository.get(self.user.id)
+        return user.slack.get_channels()
+
+
 class TimerStartHandler(JsonHandler):
     @signin_user_only
     def get(self):
-        timer = Timer.fetch(self.user.id)
-        return timer.start()
+        repository = UserRepository()
+        user = repository.get(self.user.id)
 
+        if user.slack.is_notify():
+            user.slack.notify_start()
 
-class TimerStartTaskHandler(JsonHandler):
-    def post(self):
-        user_id = self.request.get('id')
-        start_at = int(self.request.get('start_at'), 0)
-        if not user_id or not start_at:
-            return
-
-        timer = Timer.fetch(user_id)
-        if not timer:
-            return
-
-        if timer.start_at == 0 or timer.start_at != start_at:
-            return
-
-        if timer.is_continuous:
-            return timer.start(start_at=timer.break_end_at)
-        else:
-            return {}
+        return user.timer.start()
 
 
 class TimerStopHandler(JsonHandler):
     @signin_user_only
     def get(self):
-        timer = Timer.fetch(self.user.id)
-        return timer.stop()
+        repository = UserRepository()
+        user = repository.get(self.user.id)
+
+        if user.slack.is_notify():
+            user.slack.notify_stop()
+
+        return user.timer.stop()
 
 
-class TimerStopTaskHandler(JsonHandler):
+class TimerEndTaskHandler(TaskHandler):
     def post(self):
         user_id = self.request.get('id')
         if not user_id:
-            return
+            raise error.TaskUnrecoverableException(
+                error.BadRequestException('`id` parameter is not specified'))
 
-        timer = Timer.fetch(user_id)
-        return timer.stop()
+        repository = UserRepository()
+        user = repository.get(user_id)
+        if user is None:
+            raise error.TaskUnrecoverableException(
+                error.NotFoundException('No such user: {}'.format(user_id)))
+
+        repository.add_pomodoro(user)
+        user.timer.stop_after_break()
 
 
-class TimerEndTaskHandler(JsonHandler):
+class TimerStopTaskHandler(TaskHandler):
     def post(self):
         user_id = self.request.get('id')
         if not user_id:
-            return
+            raise error.TaskUnrecoverableException(
+                error.BadRequestException('`id` parameter is not specified'))
 
-        timer = Timer.fetch(user_id)
-        if not timer:
-            return
+        repository = UserRepository()
+        user = repository.get(user_id)
+        if user is None:
+            raise error.TaskUnrecoverableException(
+                error.NotFoundException('No such user: {}'.format(user_id)))
 
-        r = timer.add_pomodoro()
+        user.timer.stop()
 
-        if timer.is_continuous:
-            timer.restart_after_break()
-        else:
-            timer.stop_after_break()
-
-        return r
 
