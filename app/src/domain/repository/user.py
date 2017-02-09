@@ -11,7 +11,7 @@ class UserRepository(object):
         if not user_json:
             return None
         else:
-            j = user_json[id_]
+            j = user_json
             j['id'] = id_
             return self._build(j)
 

@@ -22,7 +22,7 @@ class Slack(object):
 
     def update(self, token, name, domain):
         self._firebase.update(name, domain)
-        self._firebase.update(token)
+        self._firebase.update_token(token)
 
     @property
     def token(self):
