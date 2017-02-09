@@ -1,3 +1,4 @@
+<div class="valign-wrapper">
 <span class="pomodoro-feel circle {{feelingColor}}"
       style="display: inline-block; width: 16px; height: 16px;
 margin: 4px;">
@@ -12,4 +13,8 @@ margin: 4px;">
 <span class="pomodoro-feel bad btn btn-flat btn-small red-text text-lighten-2">
 <i class="material-icons">thumb_down</i>
 </span>
+{{/if}}
+</div>
+{{#if scope}}
+<div class="pomodoro-scope grey-text" style="margin-left: 16px;">{{scope}}</div>
 {{/if}}

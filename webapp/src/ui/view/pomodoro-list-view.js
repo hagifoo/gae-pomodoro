@@ -7,7 +7,6 @@ const ListViewTemplate = require('../template/pomodoro-list-view-template.hbs');
 
 const PomodoroItemView = Backbone.Marionette.View.extend({
     template: ItemViewTemplate,
-    className: 'valign-wrapper',
     events: {
         'click .btn.good': 'feelGood',
         'click .btn.bad': 'feelBad'
