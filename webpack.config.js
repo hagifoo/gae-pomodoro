@@ -3,8 +3,7 @@ var path = require('path');
 module.exports = {
     context: path.join(__dirname, 'webapp', 'src'),
     entry: {
-        main: './main.js' ,
-//        html: './index.html'
+        main: './main.js'
     },
     output: {
         path: path.join(__dirname, 'app', 'assets'),
@@ -18,24 +17,11 @@ module.exports = {
     devServer: {
         contentBase: path.join(__dirname, 'app', 'assets'),
         port: 8090,
-        proxy: {
-            '/api/': {
-                target: 'http://localhost:8080/',
-                secure: false
-            },
-            '/invitation/': {
-                target: 'http://localhost:8080/',
-                secure: false
-            },
-            '/signin/': {
-                target: 'http://localhost:8080/',
-                secure: false
-            },
-            '/auth/': {
-                target: 'http://localhost:8080/',
-                secure: false
-            }
-        }
+        proxy: [{
+            context: ['/api/', '/invitation/', '/signin/', '/integrate/', '/auth/'],
+            target: 'http://localhost:8080/',
+            secure: false
+        }]
     },
     module: {
         loaders: [
