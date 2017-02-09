@@ -56,9 +56,6 @@ class Timer(object):
         self._taskqueue.delete_timer_end_task(self.start_at)
         return self._firebase.stop()
 
-    def restart_after_break(self):
-        self._taskqueue.add_timer_start_task(self.start_at, self.break_end_dt)
-
     def stop_after_break(self):
         self._taskqueue.add_timer_stop_task(self.start_at, self.break_end_dt)
 

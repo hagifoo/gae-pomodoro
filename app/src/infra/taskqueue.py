@@ -8,10 +8,6 @@ class TimerTaskqueue(object):
     def __init__(self, id_):
         self._id = id_
 
-    def get_timer_start_task_name(self, start_at):
-        return '{}start_{}_{}'.format(
-            self.NAME_PREFIX, self._id, start_at)
-
     def get_timer_stop_task_name(self, start_at):
         return '{}stop_{}_{}'.format(
             self.NAME_PREFIX, self._id, start_at)
@@ -26,16 +22,6 @@ class TimerTaskqueue(object):
             target='default',
             name=self.get_timer_end_task_name(start_at),
             params={'id': self._id},
-            queue_name='timer',
-            eta=eta
-        )
-
-    def add_timer_start_task(self, start_at, eta):
-        taskqueue.add(
-            url=self.PATH + '/start',
-            target='default',
-            name=self.get_timer_start_task_name(start_at),
-            params={'id': self._id, 'start_at': start_at},
             queue_name='timer',
             eta=eta
         )
