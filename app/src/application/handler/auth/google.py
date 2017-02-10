@@ -39,7 +39,7 @@ class SignInHandler(BaseHandler):
 
         authorization_url, state = provider.authorization_url(
             GOOGLE_AUTHORIZATION_BASE_URL,
-            state=generate_state(self.session_id),
+            # state=generate_state(self.session_id),
             access_type="offline",
             approval_prompt="force")
 
@@ -51,8 +51,8 @@ class CallbackHandler(BaseHandler):
         code = self.request.params.get('code', 'none')
         state = self.request.params.get('state')
 
-        if not check_state(state):
-            raise error.ForbiddenException('`state` not matches')
+        # if not check_state(self.session_id, state):
+        #     raise error.ForbiddenException('`state` not matches')
 
         provider = OAuth2Session(
             secret.GOOGLE_CLIENT_ID,
