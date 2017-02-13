@@ -1,13 +1,14 @@
 var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     context: path.join(__dirname, 'webapp', 'src'),
     entry: {
-        main: './main.js'
+        main: './index.js'
     },
     output: {
         path: path.join(__dirname, 'app', 'assets'),
-        filename: '[name].js',
+        filename: '[name].[hash].js',
         publicPath: ''
     },
     resolve: {
@@ -39,6 +40,12 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+        title: 'Custom template',
+        template: 'index.hbs',
+    })
+    ],
     externals: {
         firebase: 'firebase',
         jquery: 'jQuery'
