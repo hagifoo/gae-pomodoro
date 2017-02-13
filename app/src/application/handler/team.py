@@ -10,7 +10,8 @@ import error
 
 class InvitationHandler(BaseHandler):
     def get(self, invitation_code):
-        team = TeamRepository.get_by_invitation_code(invitation_code)
+        repository = TeamRepository()
+        team = repository.get_by_invitation_code(invitation_code)
         if team is None:
             raise error.NotFoundException('Invitation code is invalid.')
 
