@@ -6,9 +6,7 @@ module.exports = Backbone.Model.extend({
         user: null,
         startAt: null,  // unix time without msec
         pomodoroTime: 1500, // sec
-        breakTime: 300,  // sec
-        isContinuous: false,
-        restPomodoros: -1
+        breakTime: 300  // sec
     },
 
     start: function () {
@@ -27,10 +25,6 @@ module.exports = Backbone.Model.extend({
         this.get('user').updateTimer({breakTime: time});
     },
 
-    setContinuous: function (isContinuous) {
-        this.get('user').updateTimer({isContinuous: isContinuous});
-    },
-
     getTotalTime: function() {
         return this.get('pomodoroTime') + this.get('breakTime');
     },
@@ -42,17 +36,7 @@ module.exports = Backbone.Model.extend({
             return false;
         }
 
-        if(now.unix() - startAt < this.get('pomodoroTime')) {
-            return true;
-        }
-
-        if(this.get('isContinuous')) {
-            if((now.unix() - startAt) % (this.getTotalTime()) < this.get('pomodoroTime')) {
-                return true;
-            }
-        }
-
-        return false;
+        return now.unix() - startAt < this.get('pomodoroTime');
     },
 
     remainingPomodoroTime: function(now = Moment()) {
@@ -60,9 +44,6 @@ module.exports = Backbone.Model.extend({
             return 0;
         }
 
-        if(this.get('isContinuous')) {
-            return this.get('pomodoroTime') - (now.unix() - this.get('startAt')) % this.getTotalTime();
-        }
         return this.get('pomodoroTime') + this.get('startAt') - now.unix();
     },
 
@@ -77,14 +58,8 @@ module.exports = Backbone.Model.extend({
             return false;
         }
 
-        if(now.unix() - startAt < this.get('pomodoroTime') + this.get('breakTime')) {
-            return true;
-        }
-        if(this.get('isContinuous')) {
-            return true;
-        }
-
-        return false;
+        return now.unix() - startAt <
+            this.get('pomodoroTime') + this.get('breakTime');
     },
 
     remainingBreakTime: function(now = Moment()) {
@@ -92,9 +67,7 @@ module.exports = Backbone.Model.extend({
             return 0;
         }
 
-        if(this.get('isContinuous')) {
-            return this.get('pomodoroTime') + this.get('breakTime') - (now.unix() - this.get('startAt')) % this.getTotalTime();
-        }
-        return this.get('pomodoroTime') + this.get('breakTime') + this.get('startAt') - now.unix();
+        return this.get('pomodoroTime') + this.get('breakTime')
+            + this.get('startAt') - now.unix();
     }
 });

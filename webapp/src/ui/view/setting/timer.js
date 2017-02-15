@@ -29,12 +29,6 @@ module.exports = Backbone.Marionette.View.extend({
             set: function(attr, value) {
                 return this.model.setBreakTime(+value * 60);
             }
-        },
-        '#isContinuous': {
-            observe: 'isContinuous',
-            set: function(attr, value) {
-                return this.model.setContinuous(value);
-            }
         }
     },
     modelEvents: {
