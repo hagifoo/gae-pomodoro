@@ -2,8 +2,8 @@ const _ = require('underscore');
 const Backbone = require('backbone');
 require('backbone.marionette');
 const Moment = require('moment');
-const ItemViewTemplate = require('../template/pomodoro-item-view-template.hbs');
-const ListViewTemplate = require('../template/pomodoro-list-view-template.hbs');
+const ItemViewTemplate = require('ui/template/user/pomodoro/item.hbs');
+const ListViewTemplate = require('ui/template/user/pomodoro/list.hbs');
 
 const PomodoroItemView = Backbone.Marionette.View.extend({
     template: ItemViewTemplate,

@@ -2,7 +2,7 @@ const _ = require('underscore');
 const Backbone = require('backbone');
 require('backbone.marionette');
 require('backbone.stickit');
-const Template = require('ui/template/pomodoro-setting-view-template.hbs');
+const Template = require('ui/template/setting/pomodoro.hbs');
 
 module.exports = Backbone.Marionette.View.extend({
     template: Template,

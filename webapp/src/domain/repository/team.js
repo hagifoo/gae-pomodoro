@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 const _ = require('underscore');
 const Firebase = require('infra/firebase');
-const Team = require('domain/team');
+const Team = require('domain/entity/team/index');
 
 class Repository {
     constructor() {

@@ -1,7 +1,7 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
 require('backbone.stickit');
-const Template = require('ui/template/team-setting-view-template.hbs');
+const Template = require('ui/template/setting/team.hbs');
 
 module.exports = Backbone.Marionette.View.extend({
     template: Template,

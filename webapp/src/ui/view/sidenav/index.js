@@ -1,9 +1,9 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
-const Repository = require('domain/team-repository');
+const Repository = require('domain/repository/team');
 const Router = require('application/router');
-const TeamItemViewTemplate = require('ui/template/team-item-view-template.hbs');
-const Template = require('ui/template/sidenav-view-template.hbs');
+const TeamItemViewTemplate = require('ui/template/sidenav/team-item.hbs');
+const Template = require('ui/template/sidenav/index.hbs');
 
 const TeamItemView = Backbone.Marionette.View.extend({
     template: TeamItemViewTemplate,

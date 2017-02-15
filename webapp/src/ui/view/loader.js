@@ -1,6 +1,6 @@
-var Backbone = require('backbone');
+const Backbone = require('backbone');
 require('backbone.marionette');
-var Template = require('../template/loader-view-template.hbs');
+const Template = require('ui/template/loader.hbs');
 
 module.exports = Backbone.Marionette.View.extend({
     template: Template,

@@ -1,6 +1,6 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
-const ItemViewTemplate = require('ui/template/member-item-view-template.hbs');
+const ItemViewTemplate = require('ui/template/team/member-item.hbs');
 
 const MemberItemView = Backbone.Marionette.View.extend({
     template: ItemViewTemplate,

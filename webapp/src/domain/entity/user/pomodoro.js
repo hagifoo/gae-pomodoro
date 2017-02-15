@@ -4,7 +4,7 @@
  *
  */
 const Firebase = require('infra/firebase');
-const Pomodoro = require('domain/pomodoro');
+const Pomodoro = require('domain/entity/pomodoro');
 
 module.exports = Pomodoro.extend({
     defaults: {

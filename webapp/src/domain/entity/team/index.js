@@ -2,10 +2,10 @@ const Backbone = require('backbone');
 const _ = require('underscore');
 const Firebase = require('infra/firebase');
 const API = require('infra/api/team');
-const Timer = require('domain/timer');
-const Slack = require('domain/slack');
-const TeamPomodoro = require('domain/team-pomodoro');
-const UserRepository = require('domain/user-repository');
+const Timer = require('domain/entity/timer');
+const Slack = require('domain/entity/slack');
+const TeamPomodoro = require('domain/entity/team/pomodoro');
+const UserRepository = require('domain/repository/user');
 
 module.exports = Backbone.Model.extend({
     defaults: {

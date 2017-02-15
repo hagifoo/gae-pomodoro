@@ -1,8 +1,8 @@
 const Backbone = require('backbone');
 require('backbone.marionette');
 require('backbone.stickit');
-const Template = require('ui/template/slack-setting-view-template.hbs');
-const ChannelTemplate = require('ui/template/slack-channel-template.hbs');
+const Template = require('ui/template/setting/slack.hbs');
+const ChannelTemplate = require('ui/template/setting/slack-channel.hbs');
 const API = require('infra/api/team');
 
 const Channels = Backbone.Marionette.View.extend({

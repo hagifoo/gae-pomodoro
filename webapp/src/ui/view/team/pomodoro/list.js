@@ -2,9 +2,9 @@ const _ = require('underscore');
 const Backbone = require('backbone');
 require('backbone.marionette');
 const Moment = require('moment');
-const FeelingViewTemplate = require('ui/template/team-pomodoro-feeling-view-template.hbs');
-const ItemViewTemplate = require('ui/template/team-pomodoro-item-view-template.hbs');
-const ListViewTemplate = require('ui/template/team-pomodoro-list-view-template.hbs');
+const FeelingViewTemplate = require('ui/template/team/pomodoro/feeling.hbs');
+const ItemViewTemplate = require('ui/template/team/pomodoro/item.hbs');
+const ListViewTemplate = require('ui/template/team/pomodoro/list.hbs');
 
 const FeelingView = Backbone.Marionette.View.extend({
     template: FeelingViewTemplate,

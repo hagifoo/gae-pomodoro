@@ -1,7 +1,6 @@
-var Backbone = require('backbone');
+const Backbone = require('backbone');
 require('backbone.marionette');
-var Moment = require('moment');
-var Template = require('../template/timer-control-view-template.hbs');
+const Template = require('ui/template/timer/control.hbs');
 
 module.exports = Backbone.Marionette.View.extend({
     template: Template,

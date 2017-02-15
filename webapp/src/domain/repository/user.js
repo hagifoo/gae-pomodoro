@@ -2,7 +2,7 @@ const Backbone = require('backbone');
 const _ = require('underscore');
 const Firebase = require('infra/firebase');
 const API = require('infra/api/user');
-const User = require('domain/user');
+const User = require('domain/entity/user/index');
 
 class Repository {
     constructor() {

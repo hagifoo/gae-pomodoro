@@ -3,15 +3,15 @@ const Firebase = require('infra/firebase');
 const Backbone = require('backbone');
 require('backbone.marionette');
 const Router = require('application/router');
-const UserRepository = require('domain/user-repository');
-const TeamRepository = require('domain/team-repository');
+const UserRepository = require('domain/repository/user');
+const TeamRepository = require('domain/repository/team');
 const Loader = require('infra/loader');
-const SidenavView = require('ui/view/sidenav-view');
-const LoaderView = require('ui/view/loader-view');
-const UserView = require('ui/view/user-view');
+const SidenavView = require('ui/view/sidenav/index');
+const LoaderView = require('ui/view/loader');
+const UserView = require('ui/view/user/index');
 const TitleView = require('ui/view/title');
-const TeamMembersView = require('ui/view/team-members-view');
-const TeamView = require('ui/view/team-view');
+const TeamMembersView = require('ui/view/team/member');
+const TeamView = require('ui/view/team/index');
 
 
 Loader.start();

@@ -9,7 +9,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, 'app', 'assets'),
         filename: '[name].[hash].js',
-        publicPath: ''
+        publicPath: '/'
     },
     resolve: {
         root: path.join(__dirname, 'webapp', 'src')
