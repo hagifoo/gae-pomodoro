@@ -3,6 +3,7 @@ import base64
 import datetime
 import json
 import jws
+import os
 import python_jwt as jwt
 
 from google.appengine.api import app_identity
@@ -47,11 +48,19 @@ def create_custom_token(uid, is_premium_account):
     return header + '.' + body + '.' + sign
 
 
+TOKEN = None
+
 def get_access_token():
-    return GoogleCredentials\
+    if os.environ.get('TEST'):
+        return 'testtoken'
+    global TOKEN
+    if TOKEN:
+        return TOKEN
+    TOKEN = GoogleCredentials\
         .get_application_default()\
         .create_scoped(FIREBASE_SCOPES)\
         .get_access_token()
+    return TOKEN
 
 
 def add_user(data):
@@ -142,7 +151,8 @@ def add_user_pomodoro(start_at, time, user):
     url = '{}{}?access_token={}'.format(firebase_url(), path, token)
     data = {
         'time': time,
-        'feeling': 'none'
+        'feeling': 'none',
+        'scope': user.scope
     }
 
     return json.loads(

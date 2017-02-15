@@ -55,7 +55,8 @@ class UserRepository(object):
             name=j.get('name'),
             email=j.get('email'),
             image=j.get('image'),
-            google_id=j['googleId']
+            google_id=j['googleId'],
+            scope=j.get('scope', '')
         )
 
         t = self._build_timer(u, j.get('timer', {}))

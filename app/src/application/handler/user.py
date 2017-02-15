@@ -61,6 +61,9 @@ class TimerEndTaskHandler(TaskHandler):
         repository.add_pomodoro(user)
         user.timer.stop_after_break()
 
+        if user.slack.is_notify():
+            user.slack.notify_end()
+
 
 class TimerStopTaskHandler(TaskHandler):
     def post(self):

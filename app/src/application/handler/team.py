@@ -83,7 +83,6 @@ class TimerEndTaskHandler(TaskHandler):
                 error.NotFoundException('No such team: {}'.format(team_id)))
 
         repository.add_pomodoro(team)
-
         team.timer.stop_after_break()
 
         if team.slack.is_notify():
