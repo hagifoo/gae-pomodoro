@@ -1,14 +1,32 @@
 sudo: false
-language: node_js
+language: python
+python:
+- 2.7
+env:
+  global:
+  - GAE_VERSION=1.9.50
+  - GAE_HOME=${TRAVIS_BUILD_DIR}/.gae/google_appengine
+cache:
+  directories:
+  - .gae
 before_install:
 - openssl aes-256-cbc -K $encrypted_c17185efc1d3_key -iv $encrypted_c17185efc1d3_iv -in secrets.tar.enc -out secrets.tar -d
 - tar xvf secrets.tar
 install:
+# install GAE python SDK
+- cat $GAE_HOME/VERSION | grep release | grep -q ${GAE_VERSION} ||
+  (rm -rf $GAE_HOME &&
+  wget https://storage.googleapis.com/appengine-sdks/featured/google_appengine_${GAE_VERSION}.zip &&
+  unzip -q google_appengine_${GAE_VERSION}.zip -d $TRAVIS_BUILD_DIR/.gae)
+- pip install -r requirements.txt
+- nvm install node
 - npm install
 script:
+- PYTHONPATH=app/src/:app/lib/:app/test/:$GAE_HOME:$GAE_HOME/lib/webapp2-2.5.2/ TEST=true mamba app/test/
+before_deploy:
 - npm run build
-- cd app/
-- sed -i -e "/OAUTHLIB_INSECURE_TRANSPORT/d" app.yaml
+# remove environment variable for local development
+- cd app/ && sed -i -e "/OAUTHLIB_INSECURE_TRANSPORT/d" app.yaml
 deploy:
   provider: gae
   keyfile: client-secret.json
