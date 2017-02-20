@@ -12,7 +12,10 @@ module.exports = {
         publicPath: '/'
     },
     resolve: {
-        root: path.join(__dirname, 'webapp', 'src')
+        modules: [
+            path.join(__dirname, 'webapp', 'src'),
+            'node_modules'
+        ]
     },
     devtool: "#source-map",
     devServer: {
