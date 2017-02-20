@@ -48,19 +48,13 @@ def create_custom_token(uid, is_premium_account):
     return header + '.' + body + '.' + sign
 
 
-TOKEN = None
-
 def get_access_token():
     if os.environ.get('TEST'):
         return 'testtoken'
-    global TOKEN
-    if TOKEN:
-        return TOKEN
-    TOKEN = GoogleCredentials\
+    return GoogleCredentials\
         .get_application_default()\
         .create_scoped(FIREBASE_SCOPES)\
         .get_access_token()
-    return TOKEN
 
 
 def add_user(data):
